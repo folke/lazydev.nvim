@@ -5,6 +5,7 @@ Table of Contents                             *lazydev.nvim-table-of-contents*
 
 1. lazydev.nvim                                    |lazydev.nvim-lazydev.nvim|
   - Features                              |lazydev.nvim-lazydev.nvim-features|
+  - Limitations                        |lazydev.nvim-lazydev.nvim-limitations|
   - Requirements                      |lazydev.nvim-lazydev.nvim-requirements|
   - Installation                      |lazydev.nvim-lazydev.nvim-installation|
   - Configuration                    |lazydev.nvim-lazydev.nvim-configuration|
@@ -24,6 +25,14 @@ FEATURES                                  *lazydev.nvim-lazydev.nvim-features*
 - no longer needed to configure what plugin sources you want
     to have enabled for a certain project
 - load third-party addons from LLS-Addons <https://github.com/LuaLS/LLS-Addons>
+
+
+LIMITATIONS                            *lazydev.nvim-lazydev.nvim-limitations*
+
+- If you have files that only use types from a plugin,
+    then those types won’t be available in your workspace.
+- completion for module names when typing `require(...)`
+    will only return loaded modules in your workspace.
 
 
 REQUIREMENTS                          *lazydev.nvim-lazydev.nvim-requirements*
