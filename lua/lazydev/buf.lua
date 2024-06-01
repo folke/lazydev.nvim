@@ -16,8 +16,10 @@ M.library = {}
 M.query = nil
 
 function M.setup()
-  table.insert(M.library, vim.fs.normalize(Config.runtime) .. "/lua")
-  vim.list_extend(M.library, Config.library)
+  M.add(Config.runtime)
+  for _, lib in ipairs(Config.library) do
+    M.add(lib)
+  end
 
   M.query = vim.treesitter.query.parse(
     "lua",
@@ -51,6 +53,17 @@ function M.setup()
     end
   end
   M.on_change()
+end
+
+---@param path string
+function M.add(path)
+  path = vim.fs.normalize(path)
+  if not path:find("/lua/?$") and vim.uv.fs_stat(path .. "/lua") then
+    path = path .. "/lua"
+  end
+  if not vim.tbl_contains(M.library, path) then
+    table.insert(M.library, path)
+  end
 end
 
 function M.get_clients()
