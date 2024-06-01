@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.1.0](https://github.com/folke/lazydev.nvim/compare/v1.0.0...v1.1.0) (2024-06-01)
+
+
+### Features
+
+* added support for Neovim's package system ([37a48c0](https://github.com/folke/lazydev.nvim/commit/37a48c05311269d5cb08f0f2131e1ad583c6a485))
+
+
+### Bug Fixes
+
+* always call on_change when ataching new buffer ([f0de1e7](https://github.com/folke/lazydev.nvim/commit/f0de1e75f8e3a98e37ddf8d9b923ded039ff504e))
+* **pkg:** normalize paths for packpaths ([ee3d47f](https://github.com/folke/lazydev.nvim/commit/ee3d47f3a53891483c8a3e02f8c3e49a12064434))
+
+
+### Performance Improvements
+
+* batch require changes from file in one go ([45ef0d0](https://github.com/folke/lazydev.nvim/commit/45ef0d06cabac70c8615ae679d9efc72305f2142))
+* **pkg:** cache unloaded packs for packpath impl ([95aabb2](https://github.com/folke/lazydev.nvim/commit/95aabb27a0a8fec9826c6ca45ff8ba3d886a8888))
+
 ## 1.0.0 (2024-06-01)
 
 
