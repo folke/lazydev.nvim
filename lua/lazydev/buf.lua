@@ -37,14 +37,14 @@ function M.setup()
     callback = function(ev)
       local buffer = ev.buf ---@type number
       local client = vim.lsp.get_client_by_id(ev.data.client_id)
-      if client and client.name == "lua_ls" and Config.enabled(client) then
+      if client and client.name == "lua_ls" and Config.is_enabled(client) then
         M.on_attach(buffer)
       end
     end,
   })
 
   for _, client in ipairs(M.get_clients()) do
-    if Config.enabled(client) then
+    if Config.is_enabled(client) then
       for buf in pairs(client.attached_buffers) do
         M.on_attach(buf)
       end
@@ -56,7 +56,7 @@ end
 function M.get_clients()
   ---@param client vim.lsp.Client
   return vim.tbl_filter(function(client)
-    return Config.enabled(client)
+    return Config.is_enabled(client)
   end, vim.lsp.get_clients({ name = "lua_ls" }))
 end
 

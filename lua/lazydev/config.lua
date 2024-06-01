@@ -5,7 +5,7 @@ local M = {}
 local defaults = {
   runtime = vim.env.VIMRUNTIME --[[@as string]],
   library = {}, ---@type string[]
-  ---@param client vim.lsp.Client
+  ---@type boolean|(fun(client:vim.lsp.Client):boolean?)
   enabled = function(client)
     if vim.g.lazydev_enabled ~= nil then
       return vim.g.lazydev_enabled
@@ -18,6 +18,15 @@ local defaults = {
 ---@type lazydev.Config
 local options
 
+---@return boolean
+function M.is_enabled(client)
+  local enabled = M.enabled
+  if type(enabled) == "function" then
+    return enabled(client) and true or false
+  end
+  return enabled
+end
+
 ---@param opts? lazydev.Config
 function M.setup(opts)
   if vim.fn.has("nvim-0.10") == 0 then
@@ -28,12 +37,6 @@ function M.setup(opts)
   end
 
   options = vim.tbl_deep_extend("force", {}, options or defaults, opts or {})
-  if type(options.enabled) ~= "function" then
-    local enabled = options.enabled
-    options.enabled = function()
-      return enabled
-    end
-  end
 
   vim.schedule(function()
     require("lazydev.buf").setup()
