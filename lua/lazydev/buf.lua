@@ -94,7 +94,9 @@ function M.on_lines(buf, first, last)
     if capture == "modname" then
       local text = vim.treesitter.get_node_text(node, buf)
       if M.modules[text] == nil then
-        M.on_require(text)
+        vim.schedule(function()
+          M.on_require(text)
+        end)
       end
     end
   end
