@@ -12,12 +12,15 @@ workspace libraries.
   to have enabled for a certain project
 - load third-party addons from [LLS-Addons](https://github.com/LuaLS/LLS-Addons)
 
-## ‼️ Limitations
+## ⁉️ Limitations
 
 - If you have files that only use types from a plugin,
   then those types won't be available in your workspace.
 - completion for module names when typing `require(...)`
   will only return loaded modules in your workspace.
+- To get around the above, you can pre-load those plugins with the `library` option.
+- Neovim types are **NOT** included and also no longer needed
+  on **Neovim >= 0.10**
 
 ## ⚡️ Requirements
 
