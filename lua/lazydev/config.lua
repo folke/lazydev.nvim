@@ -7,6 +7,9 @@ local defaults = {
   library = {}, ---@type string[]
   ---@param client vim.lsp.Client
   enabled = function(client)
+    if vim.g.lazydev_enabled ~= nil then
+      return vim.g.lazydev_enabled
+    end
     return client.root_dir and vim.uv.fs_stat(client.root_dir .. "/lua") and true or false
   end,
   debug = false,
