@@ -40,14 +40,14 @@ jobs:
           chmod a+x ./nvim.appimage
           ./nvim.appimage --appimage-extract
           echo "/tmp/nvim/squashfs-root/usr/bin/" >> $GITHUB_PATH
-      - name: Generate docs
-        run: |
-          nvim --version
-          nvim --headless -u tests/init.lua -l "lua/trouble/docs.lua"
+      # - name: Generate docs
+      #   run: |
+      #     nvim --version
+      #     nvim --headless -u tests/init.lua -l "lua/lazydev/docs.lua"
       - name: panvimdoc
         uses: kdheepak/panvimdoc@main
         with:
-          vimdoc: trouble.nvim
+          vimdoc: lazydev.nvim
           version: "Neovim >= 0.8.0"
           demojify: true
           treesitter: true
@@ -70,7 +70,7 @@ jobs:
         id: release
         with:
           release-type: simple
-          package-name: trouble.nvim
+          package-name: lazydev.nvim
       - uses: actions/checkout@v3
       - name: tag stable versions
         if: ${{ steps.release.outputs.release_created }}
