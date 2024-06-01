@@ -72,6 +72,10 @@ With lazy.nvim <https://github.com/folke/lazy.nvim>
 
 CONFIGURATION                        *lazydev.nvim-lazydev.nvim-configuration*
 
+
+  [!TIP] You can force enable/disable **lazydev** in certain project folders
+  using |:h 'exrc'| with `vim.g.laydev_enabled = true` or `vim.g.lazydev_enabled
+  = false`
 Default settings:
 
 >lua
