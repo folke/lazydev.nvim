@@ -1,6 +1,6 @@
 # 💻 `lazydev.nvim`
 
-**lazydev.nvim** is a plugin that properly configures [lua_ls](https://luals.github.io/)
+**lazydev.nvim** is a plugin that properly configures [LuaLS](https://luals.github.io/)
 for editing your **Neovim** config by lazily updating your
 workspace libraries.
 
