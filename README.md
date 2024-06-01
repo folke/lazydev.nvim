@@ -36,3 +36,18 @@ return {
   -- { "folke/neodev.nvim", enabled = false }, -- make sure to uninstall or disable neodev.nvim
 }
 ```
+
+## ⚙️ Configuration
+
+Default settings:
+
+```lua
+{
+  runtime = vim.env.VIMRUNTIME --[[@as string]],
+  library = {}, ---@type string[]
+  ---@param client vim.lsp.Client
+  enabled = function(client)
+    return client.root_dir and vim.uv.fs_stat(client.root_dir .. "/lua") and true or false
+  end,
+}
+```
