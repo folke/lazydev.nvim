@@ -28,6 +28,12 @@ function M.setup(opts)
   end
 
   options = vim.tbl_deep_extend("force", {}, options or defaults, opts or {})
+  if type(options.enabled) ~= "function" then
+    local enabled = options.enabled
+    options.enabled = function()
+      return enabled
+    end
+  end
 
   vim.schedule(function()
     require("lazydev.buf").setup()
