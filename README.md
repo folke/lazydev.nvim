@@ -55,6 +55,10 @@ return {
 
 ## ⚙️ Configuration
 
+> [!TIP]
+> You can force enable/disable **lazydev** in certain project folders using [:h 'exrc'](https://neovim.io/doc/user/options.html#'exrc')
+> with `vim.g.laydev_enabled = true` or `vim.g.lazydev_enabled = false`
+
 Default settings:
 
 ```lua
