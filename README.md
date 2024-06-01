@@ -12,7 +12,7 @@ workspace libraries.
   to have enabled for a certain project
 - load third-party addons from [LLS-Addons](https://github.com/LuaLS/LLS-Addons)
 
-## ⁉️ Limitations
+## ⚠️ Limitations
 
 - If you have files that only use types from a plugin,
   then those types won't be available in your workspace.
