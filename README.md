@@ -12,6 +12,8 @@ workspace libraries.
   to have enabled for a certain project
 - load third-party addons from [LLS-Addons](https://github.com/LuaLS/LLS-Addons)
 
+![2024-06-01_21-02-40](https://github.com/folke/lazydev.nvim/assets/292349/c5f23225-88eb-454d-9b4e-1bf9183f7ff8)
+
 ## ⚠️ Limitations
 
 - If you have files that only use types from a plugin,
