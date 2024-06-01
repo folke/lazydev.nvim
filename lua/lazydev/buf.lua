@@ -1,4 +1,5 @@
 local Config = require("lazydev.config")
+local Pkg = require("lazydev.pkg")
 
 local M = {}
 
@@ -119,17 +120,14 @@ end
 function M.on_require(modname)
   local mod = vim.loader.find(modname)[1]
   if not mod then
-    local Util = require("lazy.core.util")
-    local paths = Util.get_unloaded_rtp(modname)
+    local paths = Pkg.get_unloaded(modname)
     mod = vim.loader.find(modname, { rtp = false, paths = paths })[1]
   end
 
   M.modules[modname] = mod or false
 
   if mod then
-    local Plugin = require("lazy.core.plugin")
-    local plugin = Plugin.find(mod.modpath)
-    local path = plugin and (plugin.dir .. "/lua")
+    local path = Pkg.get_library(mod)
     if path and not vim.tbl_contains(M.library, path) then
       table.insert(M.library, path)
       M.on_change()

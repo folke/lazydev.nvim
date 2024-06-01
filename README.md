@@ -28,6 +28,7 @@ workspace libraries.
 
 - Neovim >= 0.10.0
 - [lazy.nvim](https://github.com/folke/lazy.nvim) plugin manager
+  - **OR** a plugin manager that uses **Neovim**'s native package system
 
 ## 📦 Installation
 
