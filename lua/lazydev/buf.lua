@@ -127,7 +127,8 @@ function M.on_require(modname)
   M.modules[modname] = mod or false
 
   if mod then
-    local path = Pkg.get_library(mod)
+    local lua = mod.modpath:find("/lua/", 1, true)
+    local path = lua and mod.modpath:sub(1, lua + 3) or mod.modpath
     if path and not vim.tbl_contains(M.library, path) then
       table.insert(M.library, path)
       M.on_change()
