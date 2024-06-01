@@ -22,6 +22,7 @@ function M.setup()
     M.add(lib)
   end
 
+  -- Treesitter query to find require calls
   M.query = vim.treesitter.query.parse(
     "lua",
     [[
@@ -46,16 +47,20 @@ function M.setup()
     end,
   })
 
+  -- Attach to all existing clients
   for _, client in ipairs(M.get_clients()) do
-    if Config.is_enabled(client) then
-      for buf in pairs(client.attached_buffers) do
-        M.on_attach(buf)
-      end
+    for buf in pairs(client.attached_buffers) do
+      M.on_attach(buf)
     end
   end
+
+  -- Check for library changes
   M.on_change()
 end
 
+--- Will add the path to the library list
+--- if it is not already included.
+--- Automatically appends "/lua" if it exists.
 ---@param path string
 function M.add(path)
   path = vim.fs.normalize(path)
@@ -67,6 +72,7 @@ function M.add(path)
   end
 end
 
+--- Gets all LuaLS clients that are enabled
 function M.get_clients()
   ---@param client vim.lsp.Client
   return vim.tbl_filter(function(client)
@@ -79,7 +85,8 @@ function M.on_attach(buf)
     return
   end
   M.attached[buf] = buf
-  vim.api.nvim_buf_attach(buf, true, {
+  -- Attach to buffer events
+  vim.api.nvim_buf_attach(buf, false, {
     on_lines = function(_, b, _, first, _, last)
       M.on_lines(b, first, last)
     end,
@@ -87,10 +94,11 @@ function M.on_attach(buf)
       M.attached[buf] = nil
     end,
   })
+  -- Trigger initial scan
   M.on_lines(buf, 0, vim.api.nvim_buf_line_count(buf))
-  M.on_change()
 end
 
+--- Triggered when lines are changed
 ---@param buf number
 ---@param first number
 ---@param last number
@@ -102,20 +110,41 @@ function M.on_lines(buf, first, last)
   then
     return
   end
+
+  -- Find require calls in the range
   local parser = vim.treesitter.get_parser(buf)
+  local changes = {} ---@type string[]
   for id, node in M.query:iter_captures(parser:trees()[1]:root(), buf, first, last) do
     local capture = M.query.captures[id]
     if capture == "modname" then
       local text = vim.treesitter.get_node_text(node, buf)
       if M.modules[text] == nil then
-        vim.schedule(function()
-          M.on_require(text)
-        end)
+        changes[#changes + 1] = text
       end
     end
   end
+
+  if #changes > 0 then
+    vim.schedule(function()
+      M.on_requires(changes)
+    end)
+  end
 end
 
+---@param modnames string[]
+function M.on_requires(modnames)
+  local changes = false
+  for _, modname in ipairs(modnames) do
+    if M.on_require(modname) then
+      changes = true
+    end
+  end
+  if changes then
+    M.on_change()
+  end
+end
+
+--- Check if a module is available and add it to the library
 ---@param modname string
 function M.on_require(modname)
   local mod = vim.loader.find(modname)[1]
@@ -131,11 +160,12 @@ function M.on_require(modname)
     local path = lua and mod.modpath:sub(1, lua + 3) or mod.modpath
     if path and not vim.tbl_contains(M.library, path) then
       table.insert(M.library, path)
-      M.on_change()
+      return true
     end
   end
 end
 
+--- Update LuaLS settings with the current library
 function M.on_change()
   if package.loaded["neodev"] then
     vim.notify_once(
