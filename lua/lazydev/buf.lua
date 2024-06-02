@@ -148,7 +148,7 @@ function M.update()
   end
   for _, client in ipairs(M.get_clients()) do
     local update = false
-    for _, ws in ipairs(client.workspace_folders) do
+    for _, ws in ipairs(client.workspace_folders or {}) do
       local w = Workspace.get(client.id, ws.name)
       if Config.is_enabled(w.root) and w:update() then
         update = true
