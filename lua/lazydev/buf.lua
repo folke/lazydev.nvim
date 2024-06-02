@@ -13,26 +13,11 @@ M.modules = {}
 ---@type string[]
 M.library = {}
 
----@type vim.treesitter.Query
-M.query = nil
-
 function M.setup()
   M.add(Config.runtime)
   for _, lib in ipairs(Config.library) do
     M.add(lib)
   end
-
-  -- Treesitter query to find require calls
-  M.query = vim.treesitter.query.parse(
-    "lua",
-    [[
-      (function_call
-        name: (identifier) @fname (#eq? @fname "require")
-        arguments: (arguments
-          (string
-            content: (string_content) @modname)))
-    ]]
-  )
 
   local group = vim.api.nvim_create_augroup("lazydev", { clear = true })
 
