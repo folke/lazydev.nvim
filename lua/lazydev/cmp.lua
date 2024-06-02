@@ -4,7 +4,7 @@ local Pkg = require("lazydev.pkg")
 local Source = {}
 
 function Source:get_trigger_characters()
-  return { '"', "'", "." }
+  return { '"', "'", ".", "/" }
 end
 
 ---@param params cmp.SourceCompletionApiParams
@@ -13,7 +13,7 @@ function Source:complete(params, callback)
   local cmp = require("cmp")
   local before = params.context.cursor_before_line
   ---@type string?
-  local req = Pkg.get_module(before, { before = true })
+  local req, forward_slash = Pkg.get_module(before, { before = true })
   if not req then
     return callback({})
   end
@@ -22,10 +22,11 @@ function Source:complete(params, callback)
   ---@param modname string
   ---@param modpath string
   local function add(modname, modpath)
-    items[modname] = items[modname] or {
-      label = modname,
-      kind = cmp.lsp.CompletionItemKind.Module,
-    }
+    items[modname] = items[modname]
+      or {
+        label = forward_slash and modname:gsub("%.", "/") or modname,
+        kind = cmp.lsp.CompletionItemKind.Module,
+      }
     local item = items[modname]
 
     local plugin = Pkg.get_plugin_name(modpath)

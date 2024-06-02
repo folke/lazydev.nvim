@@ -1,8 +1,8 @@
 ---@class lazydev.Pkg
 local M = {}
 
-M.PAT_MODULE_BASE = "%-%-%-%s*@module%s*[\"']([%w%.%-_]+)"
-M.PAT_REQUIRE_BASE = "require%s*%(?%s*['\"]([%w%.%-_]+)"
+M.PAT_MODULE_BASE = "%-%-%-%s*@module%s*[\"']([%w%.%-_/]+)"
+M.PAT_REQUIRE_BASE = "require%s*%(?%s*['\"]([%w%.%-_/]+)"
 M.PAT_MODULE_BEFORE = M.PAT_MODULE_BASE .. "$"
 M.PAT_REQUIRE_BEFORE = M.PAT_REQUIRE_BASE .. "$"
 M.PAT_MODULE = M.PAT_MODULE_BASE .. "[\"']"
@@ -80,7 +80,7 @@ end
 --- either `---@module "modname"` or `require "modname"`
 ---@param line string
 ---@param opts? {before?:boolean}
----@return string?
+---@return string?, boolean? forward_slash
 function M.get_module(line, opts)
   local patterns = opts and opts.before and {
     M.PAT_MODULE_BEFORE,
@@ -92,7 +92,7 @@ function M.get_module(line, opts)
   for _, pat in ipairs(patterns) do
     local match = line:match(pat)
     if match then
-      return match
+      return match:gsub("/", "."), match:find("/", 1, true)
     end
   end
 end
