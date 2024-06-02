@@ -1,4 +1,4 @@
-*lazydev.nvim.txt*        For Neovim >= 0.8.0        Last change: 2024 June 01
+*lazydev.nvim.txt*        For Neovim >= 0.8.0        Last change: 2024 June 02
 
 ==============================================================================
 Table of Contents                             *lazydev.nvim-table-of-contents*
@@ -74,7 +74,7 @@ CONFIGURATION                        *lazydev.nvim-lazydev.nvim-configuration*
 
 
   [!TIP] You can force enable/disable **lazydev** in certain project folders
-  using |:h 'exrc'| with `vim.g.laydev_enabled = true` or `vim.g.lazydev_enabled
+  using |:h 'exrc'| with `vim.g.lazydev_enabled = true` or `vim.g.lazydev_enabled
   = false`
 Default settings:
 
