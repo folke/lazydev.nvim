@@ -4,7 +4,7 @@ local M = {}
 ---@class lazydev.Config
 local defaults = {
   runtime = vim.env.VIMRUNTIME --[[@as string]],
-  library = {}, ---@type string[]
+  library = {}, ---@type string[]|table<string,string>
   ---@type boolean|(fun(client:vim.lsp.Client):boolean?)
   enabled = function(client)
     if vim.g.lazydev_enabled ~= nil then

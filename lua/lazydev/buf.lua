@@ -15,7 +15,7 @@ M.library = {}
 
 function M.setup()
   M.add(Config.runtime)
-  for _, lib in ipairs(Config.library) do
+  for _, lib in pairs(Config.library) do
     M.add(lib)
   end
 
