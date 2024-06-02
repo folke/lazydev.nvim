@@ -1,3 +1,5 @@
+local Config = require("lazydev.config")
+
 ---@class lazydev.Workspace
 ---@field root string
 ---@field client_id number
@@ -103,7 +105,9 @@ function M:update()
 
   if not vim.deep_equal(settings, self.settings) then
     self.settings = settings
-    self:debug()
+    if Config.debug then
+      self:debug()
+    end
     return true
   end
 end
