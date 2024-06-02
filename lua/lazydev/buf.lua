@@ -93,6 +93,9 @@ function M.on_attach(buf)
     on_detach = function()
       M.attached[buf] = nil
     end,
+    on_reload = function()
+      M.on_lines(buf, 0, vim.api.nvim_buf_line_count(buf))
+    end,
   })
   -- Trigger initial scan
   M.on_lines(buf, 0, vim.api.nvim_buf_line_count(buf))
