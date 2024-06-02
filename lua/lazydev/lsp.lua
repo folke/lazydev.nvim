@@ -25,9 +25,6 @@ function M.attach(client)
           if Config.is_enabled(root) then
             local ws = Workspace.get(client, root)
             settings = ws.settings
-            if Config.debug then
-              ws:debug()
-            end
           end
         end
 

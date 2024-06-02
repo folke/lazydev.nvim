@@ -1,5 +1,3 @@
-local Config = require("lazydev.config")
-
 ---@class lazydev.Workspace
 ---@field root string
 ---@field client_id number
@@ -105,21 +103,23 @@ function M:update()
 
   if not vim.deep_equal(settings, self.settings) then
     self.settings = settings
+    self:debug()
     return true
   end
 end
 
 function M:debug()
-  local Util = require("lazy.core.util")
+  local Util = require("lazydev.util")
   local Plugin = require("lazy.core.plugin")
-  local lines = { "# " .. self.root }
+  local lines = { "## " .. vim.fn.fnamemodify(self.root, ":~") }
   ---@type string[]
   local library = vim.tbl_get(self.settings, "Lua", "workspace", "library") or {}
   for _, lib in ipairs(library) do
+    lib = vim.fn.fnamemodify(lib, ":~")
     local plugin = Plugin.find(lib .. "/")
     table.insert(lines, "- " .. (plugin and "**" .. plugin.name .. "** " or "") .. ("`" .. lib .. "`"))
   end
-  Util.info(lines, { title = "lazydev.nvim" })
+  Util.info(lines)
 end
 
 return M
