@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.2.0](https://github.com/folke/lazydev.nvim/compare/v1.1.0...v1.2.0) (2024-06-02)
+
+
+### Features
+
+* added fast cmp completion source for require statements and module annotations ([a5c908d](https://github.com/folke/lazydev.nvim/commit/a5c908dc8eec1823c5a6dfbb07fbe8c74fce3a14))
+* **buf:** added support for `---[@module](https://github.com/module) "foobar"`. Fixes [#4](https://github.com/folke/lazydev.nvim/issues/4) ([6d0aaae](https://github.com/folke/lazydev.nvim/commit/6d0aaaea20d270c2c49fb0ff8b2835717e635f0d))
+* **config:** allow library to be a list of strings, or a table for easier merging ([6227a55](https://github.com/folke/lazydev.nvim/commit/6227a55bd1a4b7dcdc911377032ec5bb4eedba6b))
+
+
+### Bug Fixes
+
+* **buf:** implement on_reload ([1af5a6e](https://github.com/folke/lazydev.nvim/commit/1af5a6e801e16cf02a1ba0dc4808e522f2d06ae2))
+
+
+### Performance Improvements
+
+* **buf:** not needed to use treesitter to parse requires ([62c8bbf](https://github.com/folke/lazydev.nvim/commit/62c8bbff840432eb9e7fd3d994751cbb95c89e25))
+
 ## [1.1.0](https://github.com/folke/lazydev.nvim/compare/v1.0.0...v1.1.0) (2024-06-01)
 
 
