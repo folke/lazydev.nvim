@@ -164,7 +164,7 @@ function M.update()
     )
   end
   for _, client in ipairs(M.get_clients()) do
-    M.set_handlers(client)
+    -- M.set_handlers(client)
     local settings = vim.deepcopy(client.settings or {})
 
     ---@type string[]
