@@ -178,7 +178,7 @@ function M.on_change()
 
     if not vim.deep_equal(settings, client.settings) then
       if Config.debug then
-        vim.notify("update settings:\n- " .. table.concat(library, "\n- "))
+        M.debug()
       end
       client.settings = settings
       client.notify("workspace/didChangeConfiguration", {
@@ -186,6 +186,17 @@ function M.on_change()
       })
     end
   end
+end
+
+function M.debug()
+  local Util = require("lazy.core.util")
+  local Plugin = require("lazy.core.plugin")
+  local lines = {}
+  for _, lib in ipairs(M.library) do
+    local plugin = Plugin.find(lib .. "/")
+    table.insert(lines, "- " .. (plugin and "**" .. plugin.name .. "**" or "`" .. lib .. "`"))
+  end
+  Util.info(lines, { title = "lazydev.nvim" })
 end
 
 return M
