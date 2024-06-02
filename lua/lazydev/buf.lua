@@ -129,6 +129,23 @@ function M.on_require(modname)
   end
 end
 
+---@param client vim.lsp.Client
+function M.set_handlers(client)
+  client.handlers["workspace/configuration"] = client.handlers["workspace/configuration"]
+    ---@param params lsp.ConfigurationParams
+    or function(err, params, ctx, cfg)
+      ---@type any[]
+      local ret = vim.deepcopy(vim.lsp.handlers["workspace/configuration"](err, params, ctx, cfg))
+      -- Don't set workspace libraries for the fallback scope
+      for i, item in ipairs(params.items) do
+        if item.section == "Lua" and not item.scopeUri and type(ret[i]) == "table" and ret[i].workspace then
+          ret[i].workspace.library = nil
+        end
+      end
+      return ret
+    end
+end
+
 --- Update LuaLS settings with the current library
 function M.update()
   if package.loaded["neodev"] then
@@ -138,6 +155,7 @@ function M.update()
     )
   end
   for _, client in ipairs(M.get_clients()) do
+    M.set_handlers(client)
     local settings = vim.deepcopy(client.settings or {})
 
     ---@type string[]
