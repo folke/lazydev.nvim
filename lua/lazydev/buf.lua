@@ -56,6 +56,15 @@ end
 ---@param path string
 function M.add(path)
   path = vim.fs.normalize(path)
+  -- try to resolve to a plugin path
+  if path:sub(1, 1) ~= "/" and not vim.uv.fs_stat(path) then
+    local name, extra = path:match("([^/]+)(/?.*)")
+    if name then
+      local pp = Pkg.get_plugin_path(name)
+      path = pp and (pp .. extra) or path
+    end
+  end
+  -- append /lua if it exists
   if not path:find("/lua/?$") and vim.uv.fs_stat(path .. "/lua") then
     path = path .. "/lua"
   end
@@ -198,7 +207,7 @@ function M.debug()
   local lines = {}
   for _, lib in ipairs(M.library) do
     local plugin = Plugin.find(lib .. "/")
-    table.insert(lines, "- " .. (plugin and "**" .. plugin.name .. "**" or "`" .. lib .. "`"))
+    table.insert(lines, "- " .. (plugin and "**" .. plugin.name .. "** " or "") .. ("`" .. lib .. "`"))
   end
   Util.info(lines, { title = "lazydev.nvim" })
 end

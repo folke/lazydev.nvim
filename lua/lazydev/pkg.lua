@@ -20,8 +20,7 @@ end
 ---@type string[]
 local packs = nil
 
----@param modname string
-function M.pack_unloaded(modname)
+function M.pack_unloaded()
   if packs then
     return packs
   end
@@ -43,7 +42,32 @@ function M.pack_unloaded(modname)
   return packs
 end
 
-M.get_unloaded = is_lazy and M.lazy_unloaded or M.pack_unloaded
+---@param modname string
+---@return string[]
+function M.get_unloaded(modname)
+  return is_lazy and M.lazy_unloaded(modname) or M.pack_unloaded()
+end
+
+function M.get_plugin_path(name)
+  if is_lazy then
+    local Config = require("lazy.core.config")
+    local plugin = Config.spec.plugins[name]
+    return plugin and plugin.dir
+  else
+    for _, dir in ipairs(vim.opt.rtp:get()) do
+      local basename = vim.fs.basename(dir)
+      if basename == name then
+        return dir
+      end
+    end
+    for _, dir in ipairs(M.pack_unloaded()) do
+      local basename = vim.fs.basename(dir)
+      if basename == name then
+        return dir
+      end
+    end
+  end
+end
 
 ---@param modname string
 ---@return string[]
