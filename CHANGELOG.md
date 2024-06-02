@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/folke/lazydev.nvim/compare/v1.2.0...v1.2.1) (2024-06-02)
+
+
+### Bug Fixes
+
+* added support for module names with forward slashes instead of dots ([3c9423a](https://github.com/folke/lazydev.nvim/commit/3c9423a021a8e2890b2029ad20d830c713720afc))
+
 ## [1.2.0](https://github.com/folke/lazydev.nvim/compare/v1.1.0...v1.2.0) (2024-06-02)
 
 
