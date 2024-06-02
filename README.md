@@ -11,6 +11,10 @@ workspace libraries.
 - no longer needed to configure what plugin sources you want
   to have enabled for a certain project
 - load third-party addons from [LLS-Addons](https://github.com/LuaLS/LLS-Addons)
+- will update your workspace libraries for:
+  - **require** statements: `require("nvim-treesitter")`
+  - **module annotations**: `---@module "nvim-treesitter"`
+- [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) completion source for the above
 
 ![2024-06-01_21-02-40](https://github.com/folke/lazydev.nvim/assets/292349/c5f23225-88eb-454d-9b4e-1bf9183f7ff8)
 
@@ -20,7 +24,9 @@ workspace libraries.
   then those types won't be available in your workspace.
 - completion for module names when typing `require(...)`
   will only return loaded modules in your workspace.
-- To get around the above, you can pre-load those plugins with the `library` option.
+- To get around the above, you can:
+  - pre-load those plugins with the `library` option.
+  - use the **nvim-cmp** completion source to get all available modules.
 - Neovim types are **NOT** included and also no longer needed
   on **Neovim >= 0.10**
 
@@ -49,6 +55,16 @@ return {
     },
   },
   { "Bilal2453/luvit-meta", lazy = true }, -- optional `vim.uv` typings
+  { -- optional completion source for require statements and module annotations
+    "hrsh7th/nvim-cmp",
+    opts = function(_, opts)
+      opts.sources = opts.sources or {}
+      table.insert(opts.sources, {
+        name = "lazydev",
+        group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+      })
+    end,
+  },
   -- { "folke/neodev.nvim", enabled = false }, -- make sure to uninstall or disable neodev.nvim
 }
 ```
@@ -65,12 +81,16 @@ Default settings:
 {
   runtime = vim.env.VIMRUNTIME --[[@as string]],
   library = {}, ---@type string[]
-  ---@param client vim.lsp.Client
+  ---@type boolean|(fun(client:vim.lsp.Client):boolean?)
   enabled = function(client)
     if vim.g.lazydev_enabled ~= nil then
       return vim.g.lazydev_enabled
     end
     return client.root_dir and vim.uv.fs_stat(client.root_dir .. "/lua") and true or false
   end,
+  -- add the cmp source for completion of:
+  -- `require "modname"`
+  -- `---@module "modname"`
+  cmp = true,
 }
 ```

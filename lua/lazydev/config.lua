@@ -13,6 +13,10 @@ local defaults = {
     return client.root_dir and vim.uv.fs_stat(client.root_dir .. "/lua") and true or false
   end,
   debug = false,
+  -- add the cmp source for completion of:
+  -- `require "modname"`
+  -- `---@module "modname"`
+  cmp = true,
 }
 
 ---@type lazydev.Config
@@ -40,6 +44,7 @@ function M.setup(opts)
 
   vim.schedule(function()
     require("lazydev.buf").setup()
+    require("lazydev.cmp").setup()
   end)
   return options
 end

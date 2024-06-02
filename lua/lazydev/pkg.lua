@@ -45,6 +45,37 @@ end
 
 M.get_unloaded = is_lazy and M.lazy_unloaded or M.pack_unloaded
 
+---@param modname string
+---@return string[]
+function M.find_roots(modname)
+  local ret = vim.loader.find(modname, {
+    rtp = true,
+    paths = M.get_unloaded(modname),
+    patterns = { "", ".lua" },
+    all = true,
+  })
+  return vim.tbl_map(
+    ---@param mod vim.loader.ModuleInfo
+    function(mod)
+      local path = mod.modpath:gsub("/init%.lua$", ""):gsub("%.lua$", "")
+      return path
+    end,
+    ret
+  )
+end
+
+---@param fn fun(modname:string, modpath:string)
+function M.topmods(fn)
+  local ret = vim.loader.find("*", {
+    all = true,
+    rtp = true,
+    paths = M.get_unloaded(""),
+  })
+  for _, mod in ipairs(ret) do
+    fn(mod.modname, mod.modpath)
+  end
+end
+
 --- Get the module name from a line,
 --- either `---@module "modname"` or `require "modname"`
 ---@param line string
@@ -62,6 +93,38 @@ function M.get_module(line, opts)
     local match = line:match(pat)
     if match then
       return match
+    end
+  end
+end
+
+---@param path string
+---@return string?
+function M.get_plugin_name(path)
+  local lua = path:find("/lua/", 1, true)
+  if lua then
+    local name = path:sub(1, lua - 1)
+    local slash = name:reverse():find("/", 1, true)
+    if slash then
+      name = name:sub(#name - slash + 2)
+      return name
+    end
+  end
+end
+
+---@param modname string
+---@param fn fun(modname:string, modpath:string)
+function M.lsmod(modname, fn)
+  local roots = M.find_roots(modname)
+  for _, root in ipairs(roots) do
+    for name, type in vim.fs.dir(root) do
+      local path = vim.fs.joinpath(root, name)
+      if name == "init.lua" then
+        fn(modname, path)
+      elseif (type == "file" or type == "link") and name:sub(-4) == ".lua" then
+        fn(modname .. "." .. name:sub(1, -5), path)
+      elseif type == "directory" and vim.uv.fs_stat(path .. "/init.lua") then
+        fn(modname .. "." .. name, path .. "/init.lua")
+      end
     end
   end
 end
