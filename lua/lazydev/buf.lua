@@ -19,6 +19,13 @@ function M.setup()
     M.add(lib)
   end
 
+  -- debounce updates
+  local update = vim.schedule_wrap(M.update)
+  local timer = assert(vim.uv.new_timer())
+  M.update = function()
+    timer:start(100, 0, update)
+  end
+
   local group = vim.api.nvim_create_augroup("lazydev", { clear = true })
 
   vim.api.nvim_create_autocmd("LspAttach", {
@@ -40,7 +47,7 @@ function M.setup()
   end
 
   -- Check for library changes
-  M.on_change()
+  M.update()
 end
 
 --- Will add the path to the library list
@@ -84,7 +91,7 @@ function M.on_attach(buf)
   })
   -- Trigger initial scan
   M.on_lines(buf, 0, vim.api.nvim_buf_line_count(buf))
-  M.on_change()
+  M.update()
 end
 
 --- Triggered when lines are changed
@@ -92,33 +99,12 @@ end
 ---@param first number
 ---@param last number
 function M.on_lines(buf, first, last)
-  local changes = {} ---@type string[]
-
   local lines = vim.api.nvim_buf_get_lines(buf, first, last, false)
   for _, line in ipairs(lines) do
     local module = Pkg.get_module(line)
     if module then
-      changes[#changes + 1] = module
+      M.on_require(module)
     end
-  end
-
-  if #changes > 0 then
-    vim.schedule(function()
-      M.on_requires(changes)
-    end)
-  end
-end
-
----@param modnames string[]
-function M.on_requires(modnames)
-  local changes = false
-  for _, modname in ipairs(modnames) do
-    if M.on_require(modname) then
-      changes = true
-    end
-  end
-  if changes then
-    M.on_change()
   end
 end
 
@@ -138,13 +124,13 @@ function M.on_require(modname)
     local path = lua and mod.modpath:sub(1, lua + 3) or mod.modpath
     if path and not vim.tbl_contains(M.library, path) then
       table.insert(M.library, path)
-      return true
+      M.update()
     end
   end
 end
 
 --- Update LuaLS settings with the current library
-function M.on_change()
+function M.update()
   if package.loaded["neodev"] then
     vim.notify_once(
       "Please disable `neodev.nvim` in your config.\nThis is no longer needed when you use `lazydev.nvim`",
