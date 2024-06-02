@@ -20,8 +20,8 @@ function M.attach(client)
     for _, item in ipairs(params.items) do
       if item.section then
         local settings = client.settings
-        if item.scopeUri and item.section == "Lua" then
-          local root = vim.uri_to_fname(item.scopeUri)
+        if item.section == "Lua" then
+          local root = item.scopeUri and vim.uri_to_fname(item.scopeUri) or "single"
           if Config.is_enabled(root) then
             local ws = Workspace.get(client, root)
             settings = ws.settings

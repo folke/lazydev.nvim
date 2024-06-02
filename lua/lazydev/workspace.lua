@@ -55,7 +55,7 @@ function M.get_root(client, buf)
       return ws.name
     end
   end
-  return client.root_dir or vim.api.nvim_buf_get_name(buf)
+  return client.root_dir or "single"
 end
 
 ---@param path string
