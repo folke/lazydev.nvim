@@ -92,24 +92,13 @@ end
 ---@param first number
 ---@param last number
 function M.on_lines(buf, first, last)
-  if -- fast exit when no line contains "require" in the range
-    #vim.tbl_filter(function(line)
-      return line:find("require", 1, true)
-    end, vim.api.nvim_buf_get_lines(buf, first, last, false)) == 0
-  then
-    return
-  end
-
-  -- Find require calls in the range
-  local parser = vim.treesitter.get_parser(buf)
   local changes = {} ---@type string[]
-  for id, node in M.query:iter_captures(parser:trees()[1]:root(), buf, first, last) do
-    local capture = M.query.captures[id]
-    if capture == "modname" then
-      local text = vim.treesitter.get_node_text(node, buf)
-      if M.modules[text] == nil then
-        changes[#changes + 1] = text
-      end
+
+  local lines = vim.api.nvim_buf_get_lines(buf, first, last, false)
+  for _, line in ipairs(lines) do
+    local module = Pkg.get_module(line)
+    if module then
+      changes[#changes + 1] = module
     end
   end
 

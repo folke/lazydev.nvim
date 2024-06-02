@@ -1,6 +1,13 @@
 ---@class lazydev.Pkg
 local M = {}
 
+M.PAT_MODULE_BASE = "%-%-%-%s*@module%s*[\"']([%w%.%-_]+)"
+M.PAT_REQUIRE_BASE = "require%s*%(?%s*['\"]([%w%.%-_]+)"
+M.PAT_MODULE_BEFORE = M.PAT_MODULE_BASE .. "$"
+M.PAT_REQUIRE_BEFORE = M.PAT_REQUIRE_BASE .. "$"
+M.PAT_MODULE = M.PAT_MODULE_BASE .. "[\"']"
+M.PAT_REQUIRE = M.PAT_REQUIRE_BASE .. "[\"']"
+
 local is_lazy = type(package.loaded.lazy) == "table"
 
 ---@param modname string
@@ -37,5 +44,26 @@ function M.pack_unloaded(modname)
 end
 
 M.get_unloaded = is_lazy and M.lazy_unloaded or M.pack_unloaded
+
+--- Get the module name from a line,
+--- either `---@module "modname"` or `require "modname"`
+---@param line string
+---@param opts? {before?:boolean}
+---@return string?
+function M.get_module(line, opts)
+  local patterns = opts and opts.before and {
+    M.PAT_MODULE_BEFORE,
+    M.PAT_REQUIRE_BEFORE,
+  } or {
+    M.PAT_MODULE,
+    M.PAT_REQUIRE,
+  }
+  for _, pat in ipairs(patterns) do
+    local match = line:match(pat)
+    if match then
+      return match
+    end
+  end
+end
 
 return M
