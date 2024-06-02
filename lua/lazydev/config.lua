@@ -5,12 +5,12 @@ local M = {}
 local defaults = {
   runtime = vim.env.VIMRUNTIME --[[@as string]],
   library = {}, ---@type string[]|table<string,string>
-  ---@type boolean|(fun(client:vim.lsp.Client):boolean?)
-  enabled = function(client)
+  ---@type boolean|(fun(root_dir):boolean?)
+  enabled = function(root_dir)
     if vim.g.lazydev_enabled ~= nil then
       return vim.g.lazydev_enabled
     end
-    return client.root_dir and vim.uv.fs_stat(client.root_dir .. "/lua") and true or false
+    return vim.uv.fs_stat(root_dir .. "/lua") and true or false
   end,
   debug = false,
   -- add the cmp source for completion of:
@@ -26,7 +26,7 @@ local options
 function M.is_enabled(client)
   local enabled = M.enabled
   if type(enabled) == "function" then
-    return enabled(client) and true or false
+    return enabled(client.root_dir) and true or false
   end
   return enabled
 end

@@ -83,12 +83,12 @@ Default settings:
 {
   runtime = vim.env.VIMRUNTIME --[[@as string]],
   library = {}, ---@type string[]|table<string,string>
-  ---@type boolean|(fun(client:vim.lsp.Client):boolean?)
-  enabled = function(client)
+  ---@type boolean|(fun(root_dir):boolean?)
+  enabled = function(root_dir)
     if vim.g.lazydev_enabled ~= nil then
       return vim.g.lazydev_enabled
     end
-    return client.root_dir and vim.uv.fs_stat(client.root_dir .. "/lua") and true or false
+    return vim.uv.fs_stat(root_dir .. "/lua") and true or false
   end,
   -- add the cmp source for completion of:
   -- `require "modname"`
