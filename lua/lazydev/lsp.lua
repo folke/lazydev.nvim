@@ -12,7 +12,12 @@ function M.attach(client)
   Workspace.single(client):update()
   ---@param params lsp.ConfigurationParams
   client.handlers["workspace/configuration"] = function(err, params, ctx, cfg)
-    if not params.items then
+    if not params.items or #params.items == 0 then
+      return {}
+    end
+
+    -- fallback scope
+    if #(client.workspace_folders or {}) > 0 and not params.items[1].scopeUri then
       return {}
     end
 
@@ -22,8 +27,8 @@ function M.attach(client)
         local settings = client.settings
         if item.section == "Lua" then
           local ws = item.scopeUri and Workspace.get(client, vim.uri_to_fname(item.scopeUri))
-            or not client.root_dir and Workspace.single(client)
-          if ws and ws:enabled() then
+            or Workspace.single(client)
+          if ws:enabled() then
             settings = ws.settings
           end
         end
