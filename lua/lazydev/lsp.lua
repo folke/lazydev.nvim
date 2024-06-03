@@ -1,4 +1,3 @@
-local Config = require("lazydev.config")
 local Workspace = require("lazydev.workspace")
 
 local M = {}
@@ -21,9 +20,9 @@ function M.attach(client)
       if item.section then
         local settings = client.settings
         if item.section == "Lua" then
-          local root = item.scopeUri and vim.uri_to_fname(item.scopeUri) or "single"
-          if Config.is_enabled(root) then
-            local ws = Workspace.get(client, root)
+          local ws = item.scopeUri and Workspace.get(client, vim.uri_to_fname(item.scopeUri))
+            or Workspace.single(client)
+          if ws:enabled() then
             settings = ws.settings
           end
         end

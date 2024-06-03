@@ -7,6 +7,8 @@ local Config = require("lazydev.config")
 ---@field library string[]
 local M = {}
 M.__index = M
+M.SINGLE = "single"
+M.GLOBAL = "global"
 
 ---@type table<string,lazydev.Workspace>
 M.workspaces = {}
@@ -35,7 +37,12 @@ function M.get(client, root)
 end
 
 function M.global()
-  return M.get(-1, "global")
+  return M.get(-1, M.GLOBAL)
+end
+
+---@param client vim.lsp.Client
+function M.single(client)
+  return M.get(client, M.SINGLE)
 end
 
 function M.find(buf)
@@ -70,9 +77,16 @@ function M:client()
   return vim.lsp.get_client_by_id(self.client_id)
 end
 
+function M:enabled()
+  return self.root == M.GLOBAL or Config.is_enabled(self.root)
+end
+
 function M:update()
   local client = self:client()
   if not client then
+    return
+  end
+  if not self:enabled() then
     return
   end
   local settings = vim.deepcopy(client.settings or {})
@@ -115,7 +129,9 @@ end
 function M:debug()
   local Util = require("lazydev.util")
   local Plugin = require("lazy.core.plugin")
-  local lines = { "## " .. vim.fn.fnamemodify(self.root, ":~") }
+  local root = (self.root == M.GLOBAL or self.root == M.SINGLE) and "[" .. self.root .. "]"
+    or vim.fn.fnamemodify(self.root, ":~")
+  local lines = { "## " .. root }
   ---@type string[]
   local library = vim.tbl_get(self.settings, "Lua", "workspace", "library") or {}
   for _, lib in ipairs(library) do
