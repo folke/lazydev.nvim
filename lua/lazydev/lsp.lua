@@ -22,8 +22,8 @@ function M.attach(client)
         local settings = client.settings
         if item.section == "Lua" then
           local ws = item.scopeUri and Workspace.get(client, vim.uri_to_fname(item.scopeUri))
-            or Workspace.single(client)
-          if ws:enabled() then
+            or not client.root_dir and Workspace.single(client)
+          if ws and ws:enabled() then
             settings = ws.settings
           end
         end
@@ -32,7 +32,7 @@ function M.attach(client)
         local value = vim.tbl_get(settings, unpack(keys))
         -- For empty sections with no explicit '' key, return settings as is
         if value == nil and item.section == "" then
-          value = client.settings
+          value = settings
         end
         if value == nil then
           value = vim.NIL
@@ -44,6 +44,7 @@ function M.attach(client)
   end
 end
 
+---@param client vim.lsp.Client
 function M.update(client)
   client.notify("workspace/didChangeConfiguration", {
     settings = { Lua = {} },
