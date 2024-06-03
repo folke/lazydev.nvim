@@ -1,5 +1,3 @@
-local Util = require("lazy.core.util")
-
 ---@class lazydev.Pkg
 local M = {}
 
@@ -32,7 +30,7 @@ function M.pack_unloaded()
   if not vim.tbl_contains(sites, default_site) then
     sites[#sites + 1] = default_site
   end
-
+  local Util = require("lazydev.util")
   packs = {} ---@type string[]
   for _, site in pairs(sites) do
     for _, pack in ipairs(vim.fn.expand(site .. "/pack/*/opt/*/lua", false, true)) do

@@ -1,4 +1,5 @@
 local Config = require("lazydev.config")
+local Pkg = require("lazydev.pkg")
 local Util = require("lazydev.util")
 
 ---@class lazydev.Workspace
@@ -133,15 +134,14 @@ function M:update()
 end
 
 function M:debug()
-  local Plugin = require("lazy.core.plugin")
   local root = M.is_special(self.root) and "[" .. self.root .. "]" or vim.fn.fnamemodify(self.root, ":~")
   local lines = { "## " .. root }
   ---@type string[]
   local library = vim.tbl_get(self.settings, "Lua", "workspace", "library") or {}
   for _, lib in ipairs(library) do
     lib = vim.fn.fnamemodify(lib, ":~")
-    local plugin = Plugin.find(lib .. "/")
-    table.insert(lines, "- " .. (plugin and "**" .. plugin.name .. "** " or "") .. ("`" .. lib .. "`"))
+    local plugin = Pkg.get_plugin_name(lib .. "/")
+    table.insert(lines, "- " .. (plugin and "**" .. plugin .. "** " or "") .. ("`" .. lib .. "`"))
   end
   Util.info(lines)
 end
