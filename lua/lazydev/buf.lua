@@ -62,10 +62,6 @@ function M.add(path)
       path = pp and (pp .. extra) or path
     end
   end
-  -- append /lua if it exists
-  if not path:find("/lua/?$") and vim.uv.fs_stat(path .. "/lua") then
-    path = path .. "/lua"
-  end
   Workspace:global():add(path)
 end
 

@@ -28,8 +28,8 @@ function M.new(client_id, root)
     settings = {},
     library = {},
   }, M)
-  if not M.is_special(root) and vim.uv.fs_stat(root .. "/lua") then
-    self:add(root .. "/lua")
+  if not M.is_special(root) then
+    self:add(root)
   end
   return self
 end
@@ -78,6 +78,10 @@ end
 ---@param path string
 function M:add(path)
   path = vim.uv.fs_realpath(path) or path
+  -- append /lua if it exists
+  if not path:find("/lua/?$") and vim.uv.fs_stat(path .. "/lua") then
+    path = path .. "/lua"
+  end
   if path ~= self.root and not vim.tbl_contains(self.library, path) then
     table.insert(self.library, path)
     return true
