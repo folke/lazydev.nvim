@@ -28,6 +28,9 @@ function M.new(client_id, root)
     settings = {},
     library = {},
   }, M)
+  if not M.is_special(root) and vim.uv.fs_stat(root .. "/lua") then
+    self:add(root .. "/lua")
+  end
   return self
 end
 
