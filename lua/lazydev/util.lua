@@ -20,6 +20,22 @@ function M.notify(msg, opts)
   })
 end
 
+---@param path string
+function M.is_absolute(path)
+  return path:sub(1, 1) == "/" or path:sub(2, 2) == ":"
+end
+
+---@param path string
+function M.norm(path)
+  path = vim.fs.normalize(path)
+  -- Special case for Windows drive letters
+  -- vim.fs.normalize doesn't handle them correctly
+  if path:sub(2, 2) == ":" then
+    path = path:sub(1, 1):lower() .. path:sub(2)
+  end
+  return path
+end
+
 ---@param msg string|string[]
 ---@param opts? NotifyOpts
 function M.warn(msg, opts)

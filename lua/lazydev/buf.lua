@@ -1,6 +1,7 @@
 local Config = require("lazydev.config")
 local Lsp = require("lazydev.lsp")
 local Pkg = require("lazydev.pkg")
+local Util = require("lazydev.util")
 local Workspace = require("lazydev.workspace")
 
 local M = {}
@@ -12,7 +13,7 @@ M.attached = {}
 M.modules = {}
 
 function M.setup()
-  M.add(Config.runtime)
+  M.add(vim.uv.fs_stat(Config.runtime) and Config.runtime or vim.env.VIMRUNTIME)
   for _, lib in pairs(Config.library) do
     M.add(lib)
   end
@@ -52,9 +53,9 @@ end
 --- Automatically appends "/lua" if it exists.
 ---@param path string
 function M.add(path)
-  path = vim.fs.normalize(path)
+  path = Util.norm(path)
   -- try to resolve to a plugin path
-  if path:sub(1, 1) ~= "/" and not vim.uv.fs_stat(path) then
+  if not Util.is_absolute(path) and not vim.uv.fs_stat(path) then
     local name, extra = path:match("([^/]+)(/?.*)")
     if name then
       local pp = Pkg.get_plugin_path(name)

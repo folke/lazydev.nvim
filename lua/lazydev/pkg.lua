@@ -1,3 +1,5 @@
+local Util = require("lazy.core.util")
+
 ---@class lazydev.Pkg
 local M = {}
 
@@ -35,7 +37,7 @@ function M.pack_unloaded()
   for _, site in pairs(sites) do
     for _, pack in ipairs(vim.fn.expand(site .. "/pack/*/opt/*/lua", false, true)) do
       if not pack:find("*", 1, true) then
-        packs[#packs + 1] = vim.fs.normalize(pack:sub(1, -5))
+        packs[#packs + 1] = Util.norm(pack:sub(1, -5))
       end
     end
   end

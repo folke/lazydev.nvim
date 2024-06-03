@@ -9,6 +9,7 @@ function M.attach(client)
     return
   end
   M.attached[client.id] = client.id
+  Workspace.single(client):update()
   ---@param params lsp.ConfigurationParams
   client.handlers["workspace/configuration"] = function(err, params, ctx, cfg)
     if not params.items then

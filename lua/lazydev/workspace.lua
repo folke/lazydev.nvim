@@ -1,4 +1,5 @@
 local Config = require("lazydev.config")
+local Util = require("lazydev.util")
 
 ---@class lazydev.Workspace
 ---@field root string
@@ -12,6 +13,10 @@ M.GLOBAL = "global"
 
 ---@type table<string,lazydev.Workspace>
 M.workspaces = {}
+
+function M.is_special(root)
+  return root == M.SINGLE or root == M.GLOBAL
+end
 
 ---@param client_id number
 ---@param root string
@@ -28,6 +33,7 @@ end
 ---@param client vim.lsp.Client|number
 ---@param root string
 function M.get(client, root)
+  root = M.is_special(root) and root or Util.norm(root)
   local client_id = type(client) == "number" and client or client.id
   local id = client_id .. root
   if not M.workspaces[id] then
@@ -127,10 +133,8 @@ function M:update()
 end
 
 function M:debug()
-  local Util = require("lazydev.util")
   local Plugin = require("lazy.core.plugin")
-  local root = (self.root == M.GLOBAL or self.root == M.SINGLE) and "[" .. self.root .. "]"
-    or vim.fn.fnamemodify(self.root, ":~")
+  local root = M.is_special(self.root) and "[" .. self.root .. "]" or vim.fn.fnamemodify(self.root, ":~")
   local lines = { "## " .. root }
   ---@type string[]
   local library = vim.tbl_get(self.settings, "Lua", "workspace", "library") or {}
