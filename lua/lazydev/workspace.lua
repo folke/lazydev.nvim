@@ -74,7 +74,7 @@ end
 
 ---@param path string
 function M:add(path)
-  if not vim.tbl_contains(self.library, path) then
+  if path ~= self.root and not vim.tbl_contains(self.library, path) then
     table.insert(self.library, path)
     return true
   end
