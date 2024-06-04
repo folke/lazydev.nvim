@@ -9,10 +9,7 @@ local defaults = {
   library = {}, ---@type lazydev.Library.spec[]
   ---@type boolean|(fun(root:string):boolean?)
   enabled = function(root_dir)
-    if vim.g.lazydev_enabled ~= nil then
-      return vim.g.lazydev_enabled
-    end
-    return true
+    return vim.g.lazydev_enabled == nil and true or vim.g.lazydev_enabled
   end,
   -- add the cmp source for completion of:
   -- `require "modname"`

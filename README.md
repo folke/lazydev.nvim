@@ -99,6 +99,15 @@ Examples:
       -- Needs `justinsgithub/wezterm-types` to be installed
       { path = "wezterm-types", mods = { "wezterm" } },
     },
+    -- always enable unless `vim.g.lazydev_enabled = false`
+    -- This is the default
+    enabled = function(root_dir)
+      return vim.g.lazydev_enabled == nil and true or vim.g.lazydev_enabled
+    end,
+    -- disable then a .luarc.json file is found
+    enabled = function(root_dir)
+      return not vim.uv.fs_stat(root_dir .. "/.luarc.json")
+    end,
   },
 },
 ```
@@ -118,10 +127,7 @@ local defaults = {
   cmp = true,
   ---@type boolean|(fun(root:string):boolean?)
   enabled = function(root_dir)
-    if vim.g.lazydev_enabled ~= nil then
-      return vim.g.lazydev_enabled
-    end
-    return true
+      return vim.g.lazydev_enabled == nil and true or vim.g.lazydev_enabled
   end,
 }
 ```
