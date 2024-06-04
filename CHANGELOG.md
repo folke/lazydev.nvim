@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.4.0](https://github.com/folke/lazydev.nvim/compare/v1.3.0...v1.4.0) (2024-06-04)
+
+
+### Features
+
+* added a `LazyDev` debugging command that shows libraries and settings for the current buffer ([3f6320d](https://github.com/folke/lazydev.nvim/commit/3f6320d43198bb847cbad6fd2a577dda18554f29))
+* added support for loading libraries based on words/mods ([7fabc0d](https://github.com/folke/lazydev.nvim/commit/7fabc0d5a44b3002b88c7c32b2b67bd3742c23ae))
+
+
+### Bug Fixes
+
+* **pkg:** luvit-meta/library not found using native package system ([#19](https://github.com/folke/lazydev.nvim/issues/19)) ([96062a7](https://github.com/folke/lazydev.nvim/commit/96062a7b94d5e6c3b4ec746b5d8d2a69e6389761))
+* **workspace:** make sure we always add the /lua root of the current project ([50927b4](https://github.com/folke/lazydev.nvim/commit/50927b4e70dce1ff68103ef1f2c197f1b75f4ac4))
+
+
+### Performance Improvements
+
+* only update single when needed ([fe37da2](https://github.com/folke/lazydev.nvim/commit/fe37da2cc14d4faffbe96be09b3fd08aa58ae972))
+
 ## [1.3.0](https://github.com/folke/lazydev.nvim/compare/v1.2.1...v1.3.0) (2024-06-03)
 
 
