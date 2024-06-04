@@ -47,12 +47,9 @@ return {
     ft = "lua", -- only load on lua files
     opts = {
       library = {
-        -- Library items can be absolute paths
-        -- "~/projects/my-awesome-lib",
-        -- Or relative, which means they will be resolved as a plugin
-        -- "LazyVim",
-        -- When relative, you can also provide a path to the library in the plugin dir
-        "luvit-meta/library", -- see below
+        -- See the configuration section for more details
+        -- Load luvit types when the `vim.uv` word is found
+        { path = "luvit-meta/library", words = { "vim%.uv" } },
       },
     },
   },
@@ -77,12 +74,48 @@ return {
 > You can force enable/disable **lazydev** in certain project folders using [:h 'exrc'](https://neovim.io/doc/user/options.html#'exrc')
 > with `vim.g.lazydev_enabled = true` or `vim.g.lazydev_enabled = false`
 
+Examples:
+
+```lua
+
+{
+  "folke/lazydev.nvim",
+  ft = "lua", -- only load on lua files
+  opts = {
+    library = {
+      -- Library paths can be absolute
+      "~/projects/my-awesome-lib",
+      -- Or relative, which means they will be resolved from the plugin dir.
+      "lazy.nvim",
+      "luvit-meta/library",
+      -- It can also be a table with trigger words / mods
+      -- Only load luvit types when the `vim.uv` word is found
+      { path = "luvit-meta/library", words = { "vim%.uv" } },
+      -- always load the LazyVim library
+      "LazyVim",
+      -- Only load the lazyvim library when the `LazyVim` global is found
+      { path = "LazyVim", words = { "LazyVim" } },
+      -- Load the wezterm types when the `wezterm` module is required
+      -- Needs `justinsgithub/wezterm-types` to be installed
+      { path = "wezterm-types", mods = { "wezterm" } },
+    },
+  },
+},
+```
+
 Default settings:
 
 ```lua
-{
+---@alias lazydev.Library {path:string, words:string[], mods:string[]}
+---@alias lazydev.Library.spec string|{path:string, words?:string[], mods?:string[]}
+---@class lazydev.Config
+local defaults = {
   runtime = vim.env.VIMRUNTIME --[[@as string]],
-  library = {}, ---@type string[]|table<string,string>
+  library = {}, ---@type lazydev.Library.spec[]
+  -- add the cmp source for completion of:
+  -- `require "modname"`
+  -- `---@module "modname"`
+  cmp = true,
   ---@type boolean|(fun(root:string):boolean?)
   enabled = function(root_dir)
     if vim.g.lazydev_enabled ~= nil then
@@ -90,9 +123,5 @@ Default settings:
     end
     return true
   end,
-  -- add the cmp source for completion of:
-  -- `require "modname"`
-  -- `---@module "modname"`
-  cmp = true,
 }
 ```

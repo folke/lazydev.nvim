@@ -75,16 +75,40 @@ function M.get_root(client, buf)
   return client.root_dir or "single"
 end
 
----@param path string
+---@param path string|string[]
 function M:add(path)
+  if type(path) == "table" then
+    for _, p in ipairs(path) do
+      self:add(p)
+    end
+    return
+  end
+  ---@cast path string
+  -- ignore special workspaces
+  if M.is_special(path) then
+    return
+  end
+  -- normalize
+  path = Util.norm(path)
+  -- try to resolve to a plugin path
+  if not Util.is_absolute(path) and not vim.uv.fs_stat(path) then
+    local name, extra = path:match("([^/]+)(/?.*)")
+    if name then
+      local pp = Pkg.get_plugin_path(name)
+      path = pp and (pp .. extra) or path
+    end
+  end
   path = vim.uv.fs_realpath(path) or path
+  path = Util.norm(path) -- normalize again
   -- append /lua if it exists
   if not path:find("/lua/?$") and vim.uv.fs_stat(path .. "/lua") then
     path = path .. "/lua"
   end
   if path ~= self.root and not vim.tbl_contains(self.library, path) then
     table.insert(self.library, path)
-    return true
+    if self.root ~= M.GLOBAL then
+      require("lazydev.buf").update()
+    end
   end
 end
 

@@ -1,7 +1,6 @@
 local Config = require("lazydev.config")
 local Lsp = require("lazydev.lsp")
 local Pkg = require("lazydev.pkg")
-local Util = require("lazydev.util")
 local Workspace = require("lazydev.workspace")
 
 local M = {}
@@ -13,9 +12,10 @@ M.attached = {}
 M.modules = {}
 
 function M.setup()
-  M.add(vim.uv.fs_stat(Config.runtime) and Config.runtime or vim.env.VIMRUNTIME)
-  for _, lib in pairs(Config.library) do
-    M.add(lib)
+  for _, lib in ipairs(Config.libs) do
+    if #lib.words == 0 and #lib.mods == 0 then
+      Workspace.global():add(lib.path)
+    end
   end
 
   -- debounce updates
@@ -48,28 +48,12 @@ function M.setup()
   M.update()
 end
 
---- Will add the path to the library list
---- if it is not already included.
---- Automatically appends "/lua" if it exists.
----@param path string
-function M.add(path)
-  path = Util.norm(path)
-  -- try to resolve to a plugin path
-  if not Util.is_absolute(path) and not vim.uv.fs_stat(path) then
-    local name, extra = path:match("([^/]+)(/?.*)")
-    if name then
-      local pp = Pkg.get_plugin_path(name)
-      path = pp and (pp .. extra) or path
-    end
-  end
-  Workspace:global():add(path)
-end
-
 --- Gets all LuaLS clients that are enabled
 function M.get_clients()
   return vim.lsp.get_clients({ name = "lua_ls" })
 end
 
+--- Attach to the buffer
 ---@param client vim.lsp.Client
 function M.on_attach(client, buf)
   local root = Workspace.get_root(client, buf)
@@ -104,17 +88,36 @@ end
 function M.on_lines(buf, first, last)
   local lines = vim.api.nvim_buf_get_lines(buf, first, last, false)
   for _, line in ipairs(lines) do
-    local module = Pkg.get_module(line)
-    if module then
-      M.on_require(buf, module)
+    M.on_line(buf, line)
+  end
+end
+
+---@param buf number
+---@param line string
+function M.on_line(buf, line)
+  -- Check for words
+  for word, paths in pairs(Config.words) do
+    if line:find(word) then
+      Workspace.find(buf):add(paths)
     end
+  end
+  -- Check for modules
+  local module = Pkg.get_module(line)
+  if module then
+    M.on_mod(buf, module)
   end
 end
 
 --- Check if a module is available and add it to the library
 ---@param buf number
 ---@param modname string
-function M.on_require(buf, modname)
+function M.on_mod(buf, modname)
+  -- Check for configured modules
+  if Config.mods[modname] then
+    Workspace.find(buf):add(Config.mods[modname])
+  end
+
+  -- Check for modules in Neovim plugins
   local mod = M.modules[modname]
 
   if mod == nil then
@@ -129,8 +132,8 @@ function M.on_require(buf, modname)
   if mod then
     local lua = mod.modpath:find("/lua/", 1, true)
     local path = lua and mod.modpath:sub(1, lua + 3) or mod.modpath
-    if path and Workspace.find(buf):add(path) then
-      M.update()
+    if path then
+      Workspace.find(buf):add(path)
     end
   end
 end

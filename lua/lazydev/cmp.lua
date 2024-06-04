@@ -1,4 +1,5 @@
 local Buf = require("lazydev.buf")
+local Config = require("lazydev.config")
 local Pkg = require("lazydev.pkg")
 
 local Source = {}
@@ -44,6 +45,11 @@ function Source:complete(params, callback)
 
   if not req:find(".", 1, true) then
     Pkg.topmods(add)
+    for _, lib in ipairs(Config.libs) do
+      for _, mod in ipairs(lib.mods) do
+        add(mod, lib.path)
+      end
+    end
   else
     Pkg.lsmod(req:gsub("%.[^%.]*$", ""), add)
   end
