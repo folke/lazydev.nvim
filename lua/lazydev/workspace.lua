@@ -165,7 +165,9 @@ function M:update()
   end
 end
 
-function M:debug()
+---@param opts? {details: boolean}
+function M:debug(opts)
+  opts = opts or {}
   local root = M.is_special(self.root) and "[" .. self.root .. "]" or vim.fn.fnamemodify(self.root, ":~")
   local lines = { "## " .. root }
   ---@type string[]
@@ -174,6 +176,11 @@ function M:debug()
     lib = vim.fn.fnamemodify(lib, ":~")
     local plugin = Pkg.get_plugin_name(lib .. "/")
     table.insert(lines, "- " .. (plugin and "**" .. plugin .. "** " or "") .. ("`" .. lib .. "`"))
+  end
+  if opts.details then
+    lines[#lines + 1] = "```lua"
+    lines[#lines + 1] = "settings = " .. vim.inspect(self.settings)
+    lines[#lines + 1] = "```"
   end
   Util.info(lines)
 end

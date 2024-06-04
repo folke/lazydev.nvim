@@ -75,6 +75,16 @@ function M.setup(opts)
     end
   end
 
+  vim.api.nvim_create_user_command("LazyDev", function(...)
+    require("lazydev.cmd").execute(...)
+  end, {
+    nargs = "*",
+    complete = function(...)
+      return require("lazydev.cmd").complete(...)
+    end,
+    desc = "lazydev.nvim",
+  })
+
   vim.schedule(function()
     require("lazydev.buf").setup()
     require("lazydev.cmp").setup()
