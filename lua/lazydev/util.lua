@@ -20,6 +20,8 @@ function M.notify(msg, opts)
   })
 end
 
+M.get_clients = vim.lsp.get_clients or vim.lsp.get_active_clients
+
 ---@param path string
 function M.is_absolute(path)
   return path:sub(1, 1) == "/" or path:sub(2, 2) == ":"

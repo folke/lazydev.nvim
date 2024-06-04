@@ -1,6 +1,7 @@
 local Config = require("lazydev.config")
 local Lsp = require("lazydev.lsp")
 local Pkg = require("lazydev.pkg")
+local Util = require("lazydev.util")
 local Workspace = require("lazydev.workspace")
 
 local M = {}
@@ -50,7 +51,7 @@ end
 
 --- Gets all LuaLS clients that are enabled
 function M.get_clients()
-  return vim.lsp.get_clients({ name = "lua_ls" })
+  return Util.get_clients({ name = "lua_ls" })
 end
 
 --- Attach to the buffer

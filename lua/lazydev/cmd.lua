@@ -14,7 +14,7 @@ M.commands = {
     ws:debug({ details = true })
   end,
   lsp = function()
-    local clients = vim.lsp.get_clients({ bufnr = 0 })
+    local clients = Util.get_clients({ bufnr = 0 })
     local lines = {} ---@type string[]
     for _, client in ipairs(clients) do
       lines[#lines + 1] = "## " .. client.name

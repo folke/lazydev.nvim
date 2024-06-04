@@ -56,7 +56,7 @@ function M.single(client)
 end
 
 function M.find(buf)
-  local client = vim.lsp.get_clients({
+  local client = Util.get_clients({
     name = "lua_ls",
     bufnr = buf,
   })[1]

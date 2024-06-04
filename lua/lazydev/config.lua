@@ -35,9 +35,11 @@ function M.is_enabled(root)
   return enabled
 end
 
+M.have_0_10 = vim.fn.has("nvim-0.10") == 1
+
 ---@param opts? lazydev.Config
 function M.setup(opts)
-  if vim.fn.has("nvim-0.10") == 0 then
+  if not M.have_0_10 then
     local msg = "lazydev.nvim requires Neovim >= 0.10"
     vim.notify_once(msg, vim.log.levels.ERROR, { title = "lazydev.nvim" })
     error(msg)

@@ -33,7 +33,7 @@ function M.attach(client)
         end
 
         local keys = vim.split(item.section, ".", { plain = true }) --- @type string[]
-        local value = vim.tbl_get(settings, unpack(keys))
+        local value = vim.tbl_get(settings or {}, unpack(keys))
         -- For empty sections with no explicit '' key, return settings as is
         if value == nil and item.section == "" then
           value = settings
