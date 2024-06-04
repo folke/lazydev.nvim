@@ -87,6 +87,7 @@ function M.setup(opts)
   vim.schedule(function()
     require("lazydev.buf").setup()
     require("lazydev.cmp").setup()
+    require("lazydev.coq").setup()
   end)
   return options
 end
