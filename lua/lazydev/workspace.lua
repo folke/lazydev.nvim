@@ -90,6 +90,7 @@ function M:add(path)
   end
   -- normalize
   path = Util.norm(path)
+
   -- try to resolve to a plugin path
   if not Util.is_absolute(path) and not vim.uv.fs_stat(path) then
     local name, extra = path:match("([^/]+)(/?.*)")
@@ -98,10 +99,11 @@ function M:add(path)
       path = pp and (pp .. extra) or path
     end
   end
+
   path = vim.uv.fs_realpath(path) or path
   path = Util.norm(path) -- normalize again
   -- append /lua if it exists
-  if not path:find("/lua/?$") and vim.uv.fs_stat(path .. "/lua") then
+  if Config.lua_root and not path:find("/lua/?$") and vim.uv.fs_stat(path .. "/lua") then
     path = path .. "/lua"
   end
   if path ~= self.root and not vim.tbl_contains(self.library, path) then
@@ -146,7 +148,7 @@ function M:update()
     Lua = {
       runtime = {
         version = "LuaJIT",
-        path = { "?.lua", "?/init.lua" },
+        path = Config.lua_root and { "?.lua", "?/init.lua" } or { "lua/?.lua", "lua/?/init.lua" },
         pathStrict = true,
       },
       workspace = {

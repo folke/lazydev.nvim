@@ -113,28 +113,33 @@ end
 ---@param buf number
 ---@param modname string
 function M.on_mod(buf, modname)
+  local ws = Workspace.find(buf)
+
   -- Check for configured modules
   if Config.mods[modname] then
-    Workspace.find(buf):add(Config.mods[modname])
+    return ws:add(Config.mods[modname])
   end
 
   -- Check for modules in Neovim plugins
   local mod = M.modules[modname]
 
   if mod == nil then
-    mod = vim.loader.find(modname)[1]
-    if not mod then
-      local paths = Pkg.get_unloaded(modname)
-      mod = vim.loader.find(modname, { rtp = false, paths = paths })[1]
-    end
-    M.modules[modname] = mod or false
+    -- resolve module in order:
+    -- * workspace root
+    -- * loaded plugins
+    -- * unloaded plugins
+    mod = vim.loader.find(modname, { rtp = false, paths = { ws.root } })[1]
+      or vim.loader.find(modname)[1]
+      or vim.loader.find(modname, { rtp = false, paths = Pkg.get_unloaded(modname) })[1]
+      or false
+    M.modules[modname] = mod
   end
 
   if mod then
     local lua = mod.modpath:find("/lua/", 1, true)
-    local path = lua and mod.modpath:sub(1, lua + 3) or mod.modpath
+    local path = lua and mod.modpath:sub(1, lua - 1) or mod.modpath
     if path then
-      Workspace.find(buf):add(path)
+      ws:add(path)
     end
   end
 end
