@@ -104,7 +104,7 @@ Examples:
     enabled = function(root_dir)
       return vim.g.lazydev_enabled == nil and true or vim.g.lazydev_enabled
     end,
-    -- disable then a .luarc.json file is found
+    -- disable when a .luarc.json file is found
     enabled = function(root_dir)
       return not vim.uv.fs_stat(root_dir .. "/.luarc.json")
     end,
