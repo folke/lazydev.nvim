@@ -1,4 +1,4 @@
-*lazydev.nvim.txt*        For Neovim >= 0.8.0        Last change: 2024 June 04
+*lazydev.nvim.txt*        For Neovim >= 0.8.0        Last change: 2024 June 05
 
 ==============================================================================
 Table of Contents                             *lazydev.nvim-table-of-contents*
@@ -121,7 +121,7 @@ Examples:
         enabled = function(root_dir)
           return vim.g.lazydev_enabled == nil and true or vim.g.lazydev_enabled
         end,
-        -- disable then a .luarc.json file is found
+        -- disable when a .luarc.json file is found
         enabled = function(root_dir)
           return not vim.uv.fs_stat(root_dir .. "/.luarc.json")
         end,
