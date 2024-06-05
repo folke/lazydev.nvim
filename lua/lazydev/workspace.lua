@@ -154,6 +154,7 @@ function M:update()
       workspace = {
         checkThirdParty = false,
         library = library,
+        ignoreDir = Config.lua_root and { "/lua" } or nil,
       },
     },
   })
