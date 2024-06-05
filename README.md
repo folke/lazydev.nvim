@@ -4,7 +4,7 @@
 for editing your **Neovim** config by lazily updating your
 workspace libraries.
 
-## 🚀 Features
+## ✨ Features
 
 - much faster auto-completion, since only the modules you `require`
   in open Neovim files will be loaded.
@@ -121,13 +121,36 @@ Default settings:
 local defaults = {
   runtime = vim.env.VIMRUNTIME --[[@as string]],
   library = {}, ---@type lazydev.Library.spec[]
-  -- add the cmp source for completion of:
-  -- `require "modname"`
-  -- `---@module "modname"`
-  cmp = true,
+  integrations = {
+    -- Fixes lspconfig's workspace management for LuaLS
+    -- Only create a new workspace if the buffer is not part
+    -- of an existing workspace or one of its libraries
+    lspconfig = true,
+    -- add the cmp source for completion of:
+    -- `require "modname"`
+    -- `---@module "modname"`
+    cmp = true,
+    -- same, but for Coq
+    coq = false,
+  },
   ---@type boolean|(fun(root:string):boolean?)
   enabled = function(root_dir)
       return vim.g.lazydev_enabled == nil and true or vim.g.lazydev_enabled
   end,
 }
 ```
+
+## 🚀 Usage
+
+Just install the plugin and start editing your Lua files.
+
+If you don't use [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig),
+then you can use `require('lazydev').find_workspace(buf?)` to check if the buffer
+is part of an existing workspace or its libraries.
+
+The `:LazyDev` command:
+
+- `:LazyDev` or `:LazyDev debug` will show a notification with the **lazydev**
+  settings for the current buffer.
+- `:LazyDev lsp`: will show a notification with the settings for
+  **any** attached LSP servers. Not limited to **LuaLS**.

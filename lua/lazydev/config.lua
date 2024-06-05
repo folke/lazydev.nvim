@@ -7,14 +7,22 @@ local M = {}
 local defaults = {
   runtime = vim.env.VIMRUNTIME --[[@as string]],
   library = {}, ---@type lazydev.Library.spec[]
+  integrations = {
+    -- Fixes lspconfig workspace management for LuaLS
+    -- Only create a new workspace if the buffer is not part
+    -- of an existing workspace or one of its libraries
+    lspconfig = true,
+    -- add the cmp source for completion of:
+    -- `require "modname"`
+    -- `---@module "modname"`
+    cmp = true,
+    -- same, but for Coq
+    coq = false,
+  },
   ---@type boolean|(fun(root:string):boolean?)
   enabled = function(root_dir)
     return vim.g.lazydev_enabled == nil and true or vim.g.lazydev_enabled
   end,
-  -- add the cmp source for completion of:
-  -- `require "modname"`
-  -- `---@module "modname"`
-  cmp = true,
   debug = false,
 }
 
@@ -47,6 +55,7 @@ function M.setup(opts)
     return
   end
 
+  ---@type lazydev.Config
   options = vim.tbl_deep_extend("force", {}, options or defaults, opts or {})
 
   M.libs, M.words, M.mods = {}, {}, {}
@@ -87,8 +96,11 @@ function M.setup(opts)
 
   vim.schedule(function()
     require("lazydev.buf").setup()
-    require("lazydev.cmp").setup()
-    require("lazydev.coq").setup()
+    for name, enabled in pairs(options.integrations) do
+      if enabled then
+        require("lazydev.integrations." .. name).setup()
+      end
+    end
   end)
   return options
 end
