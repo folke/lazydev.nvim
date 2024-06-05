@@ -29,7 +29,7 @@ FEATURES                                  *lazydev.nvim-lazydev.nvim-features*
 - will update your workspace libraries for:
     - **require** statements: `require("nvim-treesitter")`
     - **module annotations**`---@module "nvim-treesitter"`
-- nvim-cmp <https://github.com/hrsh7th/nvim-cmp> completion source for the above
+- nvim-cmp <https://github.com/hrsh7th/nvim-cmp> and nvim_coq <https://github.com/ms-jpq/coq_nvim> completion source for the above
 
 
 LIMITATIONS                            *lazydev.nvim-lazydev.nvim-limitations*
@@ -40,7 +40,7 @@ LIMITATIONS                            *lazydev.nvim-lazydev.nvim-limitations*
     will only return loaded modules in your workspace.
 - To get around the above, you can:
     - pre-load those plugins with the `library` option.
-    - use the **nvim-cmp** completion source to get all available modules.
+    - use the **nvim-cmp** or **coq_nvim** completion source to get all available modules.
 - Neovim types are **NOT** included and also no longer needed
     on **Neovim >= 0.10**
 
