@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.5.0](https://github.com/folke/lazydev.nvim/compare/v1.4.0...v1.5.0) (2024-06-05)
+
+
+### Features
+
+* added lspconfig integration to fix its workspace management ([3e301ee](https://github.com/folke/lazydev.nvim/commit/3e301ee157c79d1378980b5e7e4eebd3474229a4))
+* **buf:** resolve modules in order: workspace root, loaded plugins, unloaded plugins. See [#13](https://github.com/folke/lazydev.nvim/issues/13) ([47777cb](https://github.com/folke/lazydev.nvim/commit/47777cbaa4d19348c76b0d8bd750ae769de6c892))
+* optionally add a completion source for coq_nvim ([#20](https://github.com/folke/lazydev.nvim/issues/20)) ([3af5a7d](https://github.com/folke/lazydev.nvim/commit/3af5a7d749687952793cc9df93aec31547146f0c))
+* **workspace:** find a workspace for a buffer / path ([4c29893](https://github.com/folke/lazydev.nvim/commit/4c29893cf2faec7caa276d7ba510e02bc8f0dd82))
+
+
+### Bug Fixes
+
+* **pkg:** added support for detecting modules with `pcall(require, "...")` ([be8332e](https://github.com/folke/lazydev.nvim/commit/be8332eb2a40b2e450d185a4844603029ca229fb))
+
+
+### Performance Improvements
+
+* ignore `/lua` dirs since they will be in the library instead ([1f54b6e](https://github.com/folke/lazydev.nvim/commit/1f54b6ead06bd04b32ad8885ad40a7aca47461c8))
+
 ## [1.4.0](https://github.com/folke/lazydev.nvim/compare/v1.3.0...v1.4.0) (2024-06-04)
 
 
