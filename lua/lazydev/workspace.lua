@@ -55,12 +55,38 @@ function M.single(client)
   return M.get(client, M.SINGLE)
 end
 
-function M.find(buf)
-  local client = Util.get_clients({
-    name = "lua_ls",
-    bufnr = buf,
-  })[1]
-  return client and M.get(client.id, M.get_root(client, buf))
+---@param opts {buf?:number, path?:string}
+function M.find(opts)
+  if opts.buf then
+    local client = Util.get_clients({
+      name = "lua_ls",
+      bufnr = opts.buf,
+    })[1]
+    return client and M.get(client.id, M.get_root(client, opts.buf))
+  elseif opts.path then
+    for _, ws in pairs(M.workspaces) do
+      if not M.is_special(ws.root) and ws:has(opts.path) then
+        return ws
+      end
+    end
+  end
+end
+
+---@param path string
+---@param opts? {library?:boolean}
+function M:has(path, opts)
+  opts = opts or {}
+  path = Util.norm(path)
+  local dirs = { self.root } ---@type string[]
+  if opts.library ~= false then
+    vim.list_extend(dirs, self.library)
+    vim.list_extend(dirs, M.global().library)
+  end
+  for _, dir in ipairs(dirs) do
+    if (path .. "/"):sub(1, #dir + 1) == dir .. "/" then
+      return true
+    end
+  end
 end
 
 ---@param client vim.lsp.Client

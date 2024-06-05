@@ -7,7 +7,7 @@ local M = {}
 M.commands = {
   debug = function()
     local buf = vim.api.nvim_get_current_buf()
-    local ws = Workspace.find(buf)
+    local ws = Workspace.find({ buf = buf })
     if not ws then
       return Util.warn("No **LuaLS** workspace found.\nUse `:LazyDev lsp` to see settings of attached LSP clients.")
     end
