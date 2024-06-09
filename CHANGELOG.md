@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.1](https://github.com/folke/lazydev.nvim/compare/v1.5.0...v1.5.1) (2024-06-09)
+
+
+### Bug Fixes
+
+* **lsp:** make sure `client.handlers` is unique for each client. Fixes [#29](https://github.com/folke/lazydev.nvim/issues/29) ([2f239a5](https://github.com/folke/lazydev.nvim/commit/2f239a5216b184ce9a9fb6c73cae18bbf3c578ef))
+
 ## [1.5.0](https://github.com/folke/lazydev.nvim/compare/v1.4.0...v1.5.0) (2024-06-05)
 
 
