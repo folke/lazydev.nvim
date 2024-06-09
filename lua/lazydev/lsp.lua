@@ -3,14 +3,29 @@ local Workspace = require("lazydev.workspace")
 local M = {}
 M.attached = {} ---@type table<number,number>
 
+function M.assert(client)
+  assert(client and client.name == "lua_ls", "lazydev: Not a lua_ls client??")
+end
+
 ---@param client vim.lsp.Client
 function M.attach(client)
   if M.attached[client.id] then
     return
   end
+
+  M.assert(client)
+
   M.attached[client.id] = client.id
+
+  -- lspconfig uses the same empty table for all clients.
+  -- We need to make sure that each client has its own handlers table.
+  client.handlers = vim.tbl_extend("force", {}, client.handlers or {})
+
   ---@param params lsp.ConfigurationParams
   client.handlers["workspace/configuration"] = function(err, params, ctx, cfg)
+    local c = vim.lsp.get_client_by_id(ctx.client_id)
+    assert(c == client, "lazydev: Invalid client " .. (c and c.name or "unknown"))
+    M.assert(c)
     if not params.items or #params.items == 0 then
       return {}
     end
@@ -50,6 +65,7 @@ end
 
 ---@param client vim.lsp.Client
 function M.update(client)
+  M.assert(client)
   client.notify("workspace/didChangeConfiguration", {
     settings = { Lua = {} },
   })
