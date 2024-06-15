@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/folke/lazydev.nvim/compare/v1.5.1...v1.6.0) (2024-06-15)
+
+
+### Features
+
+* **debug:** add warning when a .luarc.json was found ([309d05d](https://github.com/folke/lazydev.nvim/commit/309d05d2734a77361dde6ad7d348812a2fc2fa95))
+
 ## [1.5.1](https://github.com/folke/lazydev.nvim/compare/v1.5.0...v1.5.1) (2024-06-09)
 
 
