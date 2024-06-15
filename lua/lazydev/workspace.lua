@@ -196,6 +196,10 @@ end
 
 ---@param opts? {details: boolean}
 function M:debug(opts)
+  local rc = not M.is_special(self.root) and vim.fs.find(".luarc.json", { upward = true, path = self.root })[1]
+  if rc then
+    Util.warn("Found `.luarc.json` in workspace. This may break **lazydev.nvim**\n- `" .. rc .. "`")
+  end
   opts = opts or {}
   local root = M.is_special(self.root) and "[" .. self.root .. "]" or vim.fn.fnamemodify(self.root, ":~")
   local lines = { "## " .. root }
