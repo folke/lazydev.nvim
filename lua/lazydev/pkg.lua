@@ -69,6 +69,24 @@ function M.get_plugin_path(name)
   end
 end
 
+function M.find_rock(modname)
+  if not is_lazy then
+    return
+  end
+  local Config = require("lazy.core.config")
+  for _, plugin in pairs(Config.spec.plugins) do
+    if plugin._.pkg and plugin._.pkg.source == "rockspec" then
+      local root = Config.options.rocks.root .. "/" .. plugin.name
+      root = root .. "/share/lua/5.1"
+      for _, p in ipairs({ "/init.lua", ".lua" }) do
+        if vim.uv.fs_stat(root .. "/" .. modname:gsub("%.", "/") .. p) then
+          return root
+        end
+      end
+    end
+  end
+end
+
 ---@param modname string
 ---@return string[]
 function M.find_roots(modname)

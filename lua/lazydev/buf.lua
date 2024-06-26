@@ -141,6 +141,11 @@ function M.on_mod(buf, modname)
     if path then
       ws:add(path)
     end
+  else
+    local modpath = Pkg.find_rock(modname)
+    if modpath then
+      ws:add(modpath)
+    end
   end
 end
 
