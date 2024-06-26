@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/folke/lazydev.nvim/compare/v1.6.0...v1.7.0) (2024-06-26)
+
+
+### Features
+
+* added support for luarocks installed with lazy ([e3d0d55](https://github.com/folke/lazydev.nvim/commit/e3d0d55b4bff301be97f6a9820b21c59381440c1))
+
 ## [1.6.0](https://github.com/folke/lazydev.nvim/compare/v1.5.1...v1.6.0) (2024-06-15)
 
 
