@@ -79,6 +79,7 @@ function M.on_attach(client, buf)
   })
   -- Trigger initial scan
   M.on_lines(buf, 0, vim.api.nvim_buf_line_count(buf))
+  M.on_file(buf)
   M.update()
 end
 
@@ -145,6 +146,20 @@ function M.on_mod(buf, modname)
     local modpath = Pkg.find_rock(modname)
     if modpath then
       ws:add(modpath)
+    end
+  end
+end
+
+---@param buf number
+function M.on_file(buf)
+  -- Check for words
+  print("Found file " .. vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":p:t"))
+  for file, paths in pairs(Config.files) do
+    if file == vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":p:t") then
+      print("File matches name. Attaching")
+      print(vim.inspect(paths))
+      print(vim.inspect(Workspace.find({ buf = buf })))
+      -- Workspace.find({ buf = buf }):add(paths)
     end
   end
 end

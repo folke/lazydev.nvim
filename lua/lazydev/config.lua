@@ -1,8 +1,8 @@
 ---@class lazydev.Config.mod: lazydev.Config
 local M = {}
 
----@alias lazydev.Library {path:string, words:string[], mods:string[]}
----@alias lazydev.Library.spec string|{path:string, words?:string[], mods?:string[]}
+---@alias lazydev.Library {path:string, words:string[], mods:string[], files:string[]}
+---@alias lazydev.Library.spec string|{path:string, words?:string[], mods?:string[], files?:string[]}
 ---@class lazydev.Config
 local defaults = {
   runtime = vim.env.VIMRUNTIME --[[@as string]],
@@ -29,6 +29,7 @@ local defaults = {
 M.libs = {} ---@type lazydev.Library[]
 M.words = {} ---@type table<string, string[]>
 M.mods = {} ---@type table<string, string[]>
+M.files = {} ---@type table<string, string[]>
 
 ---@type lazydev.Config
 local options
@@ -58,18 +59,20 @@ function M.setup(opts)
   ---@type lazydev.Config
   options = vim.tbl_deep_extend("force", {}, options or defaults, opts or {})
 
-  M.libs, M.words, M.mods = {}, {}, {}
+  M.libs, M.words, M.mods, M.files = {}, {}, {}, {}
   local runtime = require("lazydev.util").norm(options.runtime)
   table.insert(M.libs, {
     path = vim.uv.fs_stat(runtime) and runtime or vim.env.VIMRUNTIME,
     words = {},
     mods = {},
+    files = {},
   })
   for _, lib in pairs(M.library) do
     table.insert(M.libs, {
       path = type(lib) == "table" and lib.path or lib,
       words = type(lib) == "table" and lib.words or {},
       mods = type(lib) == "table" and lib.mods or {},
+      files = type(lib) == "table" and lib.files or {},
     })
   end
 
@@ -81,6 +84,10 @@ function M.setup(opts)
     for _, mod in ipairs(lib.mods) do
       M.mods[mod] = M.mods[mod] or {}
       table.insert(M.mods[mod], lib.path)
+    end
+    for _, file in ipairs(lib.files) do
+      M.files[file] = M.files[file] or {}
+      table.insert(M.files[file], lib.path)
     end
   end
 
