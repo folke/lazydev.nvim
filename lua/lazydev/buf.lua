@@ -14,7 +14,7 @@ M.modules = {}
 
 function M.setup()
   for _, lib in ipairs(Config.libs) do
-    if #lib.words == 0 and #lib.mods == 0 then
+    if #lib.words == 0 and #lib.mods == 0 and #lib.files == 0 then
       Workspace.global():add(lib.path)
     end
   end
@@ -153,13 +153,9 @@ end
 ---@param buf number
 function M.on_file(buf)
   -- Check for words
-  print("Found file " .. vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":p:t"))
   for file, paths in pairs(Config.files) do
     if file == vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":p:t") then
-      print("File matches name. Attaching")
-      print(vim.inspect(paths))
-      print(vim.inspect(Workspace.find({ buf = buf })))
-      -- Workspace.find({ buf = buf }):add(paths)
+      Workspace.find({ buf = buf }):add(paths)
     end
   end
 end

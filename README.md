@@ -98,6 +98,9 @@ Examples:
       -- Load the wezterm types when the `wezterm` module is required
       -- Needs `justinsgithub/wezterm-types` to be installed
       { path = "wezterm-types", mods = { "wezterm" } },
+      -- Load the xmake types when opening file named `xmake.lua`
+      -- Needs `LelouchHe/xmake-luals-addon` to be installed
+      { path = "xmake-luals-addon/library", files = { "xmake.lua" } },
     },
     -- always enable unless `vim.g.lazydev_enabled = false`
     -- This is the default
