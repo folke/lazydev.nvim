@@ -14,7 +14,7 @@ M.modules = {}
 
 function M.setup()
   for _, lib in ipairs(Config.libs) do
-    if #lib.words == 0 and #lib.mods == 0 then
+    if #lib.words == 0 and #lib.mods == 0 and #lib.files == 0 then
       Workspace.global():add(lib.path)
     end
   end
@@ -79,6 +79,7 @@ function M.on_attach(client, buf)
   })
   -- Trigger initial scan
   M.on_lines(buf, 0, vim.api.nvim_buf_line_count(buf))
+  M.on_file(buf)
   M.update()
 end
 
@@ -145,6 +146,16 @@ function M.on_mod(buf, modname)
     local modpath = Pkg.find_rock(modname)
     if modpath then
       ws:add(modpath)
+    end
+  end
+end
+
+---@param buf number
+function M.on_file(buf)
+  -- Check for words
+  for file, paths in pairs(Config.files) do
+    if file == vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":p:t") then
+      Workspace.find({ buf = buf }):add(paths)
     end
   end
 end
