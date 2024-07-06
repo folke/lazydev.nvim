@@ -12,4 +12,3 @@ jobs:
     with:
       plugin: lazydev.nvim
       repo: folke/lazydev.nvim
-      tests: false
