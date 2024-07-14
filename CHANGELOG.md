@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.7.0](https://github.com/folke/lazydev.nvim/compare/v1.6.0...v1.7.0) (2024-07-14)
+
+
+### Features
+
+* added `files` option [#39](https://github.com/folke/lazydev.nvim/issues/39) ([#41](https://github.com/folke/lazydev.nvim/issues/41)) ([380e80d](https://github.com/folke/lazydev.nvim/commit/380e80d1491e3195f25e3d180170d8dd438db25a))
+* added support for luarocks installed with lazy ([e3d0d55](https://github.com/folke/lazydev.nvim/commit/e3d0d55b4bff301be97f6a9820b21c59381440c1))
+
+
+### Bug Fixes
+
+* **util:** notify ([a74b397](https://github.com/folke/lazydev.nvim/commit/a74b397e8d6d291313d4f4f969edb6e57ddf7ab7))
+
 ## [1.7.0](https://github.com/folke/lazydev.nvim/compare/v1.6.0...v1.7.0) (2024-07-04)
 
 
