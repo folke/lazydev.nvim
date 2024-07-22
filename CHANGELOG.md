@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.1](https://github.com/folke/lazydev.nvim/compare/v1.7.0...v1.7.1) (2024-07-22)
+
+
+### Performance Improvements
+
+* lazy-load integrations ([f5d344d](https://github.com/folke/lazydev.nvim/commit/f5d344dcc9121991238b8acff7e77531b5f7fa06))
+
 ## [1.7.0](https://github.com/folke/lazydev.nvim/compare/v1.6.0...v1.7.0) (2024-07-14)
 
 
