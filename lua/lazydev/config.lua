@@ -103,11 +103,7 @@ function M.setup(opts)
 
   vim.schedule(function()
     require("lazydev.buf").setup()
-    for name, enabled in pairs(options.integrations) do
-      if enabled then
-        require("lazydev.integrations." .. name).setup()
-      end
-    end
+    require("lazydev.integrations").setup()
   end)
   return options
 end
