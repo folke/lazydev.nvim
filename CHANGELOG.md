@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/folke/lazydev.nvim/compare/v1.7.1...v1.8.0) (2024-07-25)
+
+
+### Features
+
+* make lazydev partially work on Neovim &lt; 0.10 ([6c24937](https://github.com/folke/lazydev.nvim/commit/6c249371681a3a9f50b6953ca2116e4ec771b809))
+
 ## [1.7.1](https://github.com/folke/lazydev.nvim/compare/v1.7.0...v1.7.1) (2024-07-22)
 
 
