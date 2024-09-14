@@ -29,6 +29,13 @@ workspace libraries.
   - use the **nvim-cmp** or **coq_nvim** completion source to get all available modules.
 - Neovim types are **NOT** included and also no longer needed
   on **Neovim >= 0.10**
+- `.luarc.json` may break the plugin. If this is the case one can instruct git
+  to ignore local changes to this file and remove it.
+
+```sh
+git update-index --assume-unchanged .luarc.json
+rm .luarc.json
+```
 
 ## ⚡️ Requirements
 

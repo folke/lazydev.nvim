@@ -44,6 +44,11 @@ LIMITATIONS                            *lazydev.nvim-lazydev.nvim-limitations*
     - use the **nvim-cmp** or **coq_nvim** completion source to get all available modules.
 - Neovim types are **NOT** included and also no longer needed
     on **Neovim >= 0.10**
+- `.luarc.json` may break the plugin. In this case git can be instructed
+    to ignore local changes file can be safely removed without impacting the remote.
+
+    git update-index --assume-unchanged .luarc.json
+    rm .luarc.json
 
 
 REQUIREMENTS                          *lazydev.nvim-lazydev.nvim-requirements*
