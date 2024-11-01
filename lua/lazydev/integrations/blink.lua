@@ -42,12 +42,14 @@ function M:get_completions(ctx, callback)
   ---@param modpath string
   local function add(modname, modpath)
     local word = forward_slash and modname:gsub("%.", "/") or modname
+    local parts = vim.split(modname, ".", { plain = true })
+    local last = parts[#parts] or modname
     items[modname] = items[modname]
       or {
         label = word,
         kind = vim.lsp.protocol.CompletionItemKind.Module,
         insertTextFormat = vim.lsp.protocol.InsertTextFormat.PlainText,
-        insertText = word,
+        insertText = last,
       }
     local item = items[modname]
     -- item.label = "test + " .. item.label
