@@ -121,7 +121,7 @@ Examples:
     -- always enable unless `vim.g.lazydev_enabled = false`
     -- This is the default
     enabled = function(root_dir)
-      return vim.g.lazydev_enabled == nil and true or vim.g.lazydev_enabled
+      return vim.g.lazydev_enabled == nil or vim.g.lazydev_enabled
     end,
     -- disable when a .luarc.json file is found
     enabled = function(root_dir)
@@ -154,7 +154,7 @@ local defaults = {
   },
   ---@type boolean|(fun(root:string):boolean?)
   enabled = function(root_dir)
-      return vim.g.lazydev_enabled == nil and true or vim.g.lazydev_enabled
+      return vim.g.lazydev_enabled == nil or vim.g.lazydev_enabled
   end,
 }
 ```
