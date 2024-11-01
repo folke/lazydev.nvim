@@ -1,8 +1,8 @@
 ---@class lazydev.Pkg
 local M = {}
 
-M.PAT_MODULE_BASE = "%-%-%-%s*@module%s*[\"']([%w%.%-_/]+)"
-M.PAT_REQUIRE_BASE = "require%s*,?%s*%(?%s*['\"]([%w%.%-_/]+)"
+M.PAT_MODULE_BASE = "%-%-%-%s*@module%s*[\"']([%w%.%-_/]*)"
+M.PAT_REQUIRE_BASE = "require%s*,?%s*%(?%s*['\"]([%w%.%-_/]*)"
 M.PAT_MODULE_BEFORE = M.PAT_MODULE_BASE .. "$"
 M.PAT_REQUIRE_BEFORE = M.PAT_REQUIRE_BASE .. "$"
 M.PAT_MODULE = M.PAT_MODULE_BASE .. "[\"']"
