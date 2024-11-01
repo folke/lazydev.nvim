@@ -14,7 +14,7 @@ workspace libraries.
 - will update your workspace libraries for:
   - **require** statements: `require("nvim-treesitter")`
   - **module annotations**: `---@module "nvim-treesitter"`
-- [nvim-cmp](https://github.com/hrsh7th/nvim-cmp) and [nvim_coq](https://github.com/ms-jpq/coq_nvim) completion source for the above
+- [nvim-cmp](https://github.com/hrsh7th/nvim-cmp), [blink.cmp](https://github.com/Saghen/blink.cmp) and [nvim_coq](https://github.com/ms-jpq/coq_nvim) completion source for the above
 
 ![2024-06-01_21-02-40](https://github.com/folke/lazydev.nvim/assets/292349/c5f23225-88eb-454d-9b4e-1bf9183f7ff8)
 
@@ -26,7 +26,7 @@ workspace libraries.
   will only return loaded modules in your workspace.
 - To get around the above, you can:
   - pre-load those plugins with the `library` option.
-  - use the **nvim-cmp** or **coq_nvim** completion source to get all available modules.
+  - use the **nvim-cmp**, **blink.cmp** or **coq_nvim** completion source to get all available modules.
 - Neovim types are **NOT** included and also no longer needed
   on **Neovim >= 0.10**
 
@@ -54,7 +54,7 @@ return {
     },
   },
   { "Bilal2453/luvit-meta", lazy = true }, -- optional `vim.uv` typings
-  { -- optional completion source for require statements and module annotations
+  { -- optional cmp completion source for require statements and module annotations
     "hrsh7th/nvim-cmp",
     opts = function(_, opts)
       opts.sources = opts.sources or {}
@@ -64,6 +64,22 @@ return {
       })
     end,
   },
+  { -- optional blink completion source for require statements and module annotations
+    "saghen/blink.cmp",
+    opts = {
+      sources = {
+        -- add lazydev to your completion providers
+        completion = {
+          enabled_providers = { "lsp", "path", "snippets", "buffer", "lazydev" },
+        },
+        providers = {
+          -- dont show LuaLS require statements when lazydev has items
+          lsp = { fallback_for = { "lazydev" } },
+          lazydev = { name = "LazyDev", module = "lazydev.integrations.blink" },
+        },
+      },
+    },
+  }
   -- { "folke/neodev.nvim", enabled = false }, -- make sure to uninstall or disable neodev.nvim
 }
 ```
