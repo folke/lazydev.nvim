@@ -2,11 +2,20 @@ local Config = require("lazydev.config")
 
 local M = {}
 
-M.plugins = {
+-- plugin to integration
+---@type table<string, string>
+M.p2i = {
   ["nvim-cmp"] = "cmp",
   ["coq_nvim"] = "coq",
   lspconfig = "lspconfig",
 }
+
+-- integration to plugin
+---@type table<string, string>
+M.i2p = {}
+for k, v in pairs(M.p2i) do
+  M.i2p[v] = k
+end
 
 ---@type table<string, boolean>
 M.loaded = {}
@@ -18,7 +27,7 @@ function M.setup()
       group = vim.api.nvim_create_augroup("lazydev-integrations", { clear = true }),
       pattern = "LazyLoad",
       callback = function(event)
-        local name = M.plugins[event.data]
+        local name = M.p2i[event.data]
         if name then
           M.load(name)
         end
@@ -26,7 +35,7 @@ function M.setup()
     })
     for name, enabled in pairs(Config.integrations) do
       if enabled then
-        local plugin = LazyConfig.plugins[M.plugins[name]]
+        local plugin = LazyConfig.plugins[M.i2p[name]]
         local is_loaded = plugin and plugin._.loaded
         if is_loaded then
           M.load(name)
