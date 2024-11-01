@@ -161,7 +161,7 @@ function M.lsmod(modname, fn)
     for name, type in vim.fs.dir(root) do
       local path = vim.fs.joinpath(root, name)
       if name == "init.lua" then
-        fn(modname, path)
+        -- fn(modname, path)
       elseif (type == "file" or type == "link") and name:sub(-4) == ".lua" then
         fn(modname .. "." .. name:sub(1, -5), path)
       elseif type == "directory" and vim.uv.fs_stat(path .. "/init.lua") then
