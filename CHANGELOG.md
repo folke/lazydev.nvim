@@ -1,5 +1,20 @@
 # Changelog
 
+## [1.9.0](https://github.com/folke/lazydev.nvim/compare/v1.8.0...v1.9.0) (2024-11-24)
+
+
+### Features
+
+* **integrations:** added blink integration. Closes [#71](https://github.com/folke/lazydev.nvim/issues/71) ([c4cd076](https://github.com/folke/lazydev.nvim/commit/c4cd076ad8f04bbe9749f136848cb9a2c16270b8))
+
+
+### Bug Fixes
+
+* **blink:** complete the extra mod names only ([d580089](https://github.com/folke/lazydev.nvim/commit/d5800897d9180cea800023f2429bce0a94ed6064))
+* **completion:** show top mods when no module typed yet ([7008928](https://github.com/folke/lazydev.nvim/commit/7008928168c63bc3ddc1e1aa2ec27b3591670ae8))
+* **integrations:** correct mapping for loaded plugins ([2c09c87](https://github.com/folke/lazydev.nvim/commit/2c09c8782f4bd83cfc98b272eb9ab687c3e746f8))
+* **pkg:** lsmod should not return the module itself ([74443e2](https://github.com/folke/lazydev.nvim/commit/74443e2f0c40f77ec3ffb5ea7cd7b613c05da755))
+
 ## [1.8.0](https://github.com/folke/lazydev.nvim/compare/v1.7.1...v1.8.0) (2024-07-25)
 
 
