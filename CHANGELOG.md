@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.1](https://github.com/folke/lazydev.nvim/compare/v1.9.0...v1.9.1) (2024-12-20)
+
+
+### Bug Fixes
+
+* **integration:** update blink integration ([#80](https://github.com/folke/lazydev.nvim/issues/80)) ([2eecba3](https://github.com/folke/lazydev.nvim/commit/2eecba3831e8e344654e2f6ff5530d6ffc59fb90))
+
 ## [1.9.0](https://github.com/folke/lazydev.nvim/compare/v1.8.0...v1.9.0) (2024-11-24)
 
 
