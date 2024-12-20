@@ -1,4 +1,4 @@
-*lazydev.nvim.txt*           For Neovim          Last change: 2024 November 24
+*lazydev.nvim.txt*           For Neovim          Last change: 2024 December 20
 
 ==============================================================================
 Table of Contents                             *lazydev.nvim-table-of-contents*
@@ -85,13 +85,14 @@ With lazy.nvim <https://github.com/folke/lazy.nvim>
         opts = {
           sources = {
             -- add lazydev to your completion providers
-            completion = {
-              enabled_providers = { "lsp", "path", "snippets", "buffer", "lazydev" },
-            },
+            default = { "lazydev", "lsp", "path", "snippets", "buffer" },
             providers = {
-              -- dont show LuaLS require statements when lazydev has items
-              lsp = { fallback_for = { "lazydev" } },
-              lazydev = { name = "LazyDev", module = "lazydev.integrations.blink" },
+              lazydev = {
+                name = "LazyDev",
+                module = "lazydev.integrations.blink",
+                -- make lazydev completions top priority (see `:h blink.cmp`)
+                score_offset = 100,
+              },
             },
           },
         },
