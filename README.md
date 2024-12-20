@@ -70,7 +70,6 @@ return {
         -- add lazydev to your completion providers
         default = { "lazydev", "lsp", "path", "snippets", "buffer" },
         providers = {
-          -- dont show LuaLS require statements when lazydev has items
           lazydev = {
             name = "LazyDev",
             module = "lazydev.integrations.blink",
