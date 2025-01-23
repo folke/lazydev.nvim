@@ -32,7 +32,7 @@ function M.setup()
     group = group,
     callback = function(ev)
       local client = vim.lsp.get_client_by_id(ev.data.client_id)
-      if client and client.name == "lua_ls" then
+      if client and Lsp.supports(client) then
         M.on_attach(client, ev.buf)
       end
     end,
@@ -50,8 +50,12 @@ function M.setup()
 end
 
 --- Gets all LuaLS clients that are enabled
+---@return vim.lsp.Client[]
 function M.get_clients()
-  return Util.get_clients({ name = "lua_ls" })
+  local ret = Util.get_clients()
+  return vim.tbl_filter(function(client)
+    return Lsp.supports(client)
+  end, ret)
 end
 
 --- Attach to the buffer

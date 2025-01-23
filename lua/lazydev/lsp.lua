@@ -4,8 +4,14 @@ local M = {}
 M.attached = {} ---@type table<number,number>
 M.did_global_handler = false
 
+---@param client? vim.lsp.Client
 function M.assert(client)
-  assert(client and client.name == "lua_ls", "lazydev: Not a lua_ls client??")
+  assert(M.supports(client), "lazydev: Not a lua_ls client??")
+end
+
+---@param client? vim.lsp.Client
+function M.supports(client)
+  return client and vim.tbl_contains({ "lua_ls", "emmylua-analyzer-rust" }, client.name)
 end
 
 ---@param client vim.lsp.Client

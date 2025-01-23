@@ -58,10 +58,12 @@ end
 ---@param opts {buf?:number, path?:string}
 function M.find(opts)
   if opts.buf then
-    local client = Util.get_clients({
-      name = "lua_ls",
-      bufnr = opts.buf,
-    })[1]
+    local Lsp = require("lazydev.lsp")
+    local clients = Util.get_clients({ bufnr = opts.buf })
+    clients = vim.tbl_filter(function(client)
+      return client and Lsp.supports(client)
+    end, clients)
+    local client = clients[1]
     return client and M.get(client.id, M.get_root(client, opts.buf))
   elseif opts.path then
     for _, ws in pairs(M.workspaces) do
