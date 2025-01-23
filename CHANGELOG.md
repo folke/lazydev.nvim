@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.10.0](https://github.com/folke/lazydev.nvim/compare/v1.9.0...v1.10.0) (2025-01-23)
+
+
+### Features
+
+* added preliminary support for emmylua-analyzer-rust. See [#86](https://github.com/folke/lazydev.nvim/issues/86) ([af3789e](https://github.com/folke/lazydev.nvim/commit/af3789e731fcf57d1b9553b074ac73a439749415))
+
+
+### Bug Fixes
+
+* **integration:** update blink integration ([#80](https://github.com/folke/lazydev.nvim/issues/80)) ([2eecba3](https://github.com/folke/lazydev.nvim/commit/2eecba3831e8e344654e2f6ff5530d6ffc59fb90))
+
 ## [1.9.0](https://github.com/folke/lazydev.nvim/compare/v1.8.0...v1.9.0) (2024-11-24)
 
 
