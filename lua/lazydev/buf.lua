@@ -28,12 +28,16 @@ function M.setup()
 
   local group = vim.api.nvim_create_augroup("lazydev", { clear = true })
 
-  vim.api.nvim_create_autocmd("LspAttach", {
+  vim.api.nvim_create_autocmd({ "LspAttach", "LspDetach" }, {
     group = group,
     callback = function(ev)
       local client = vim.lsp.get_client_by_id(ev.data.client_id)
       if client and Lsp.supports(client) then
-        M.on_attach(client, ev.buf)
+        if ev.event == "LspAttach" then
+          M.on_attach(client, ev.buf)
+        else
+          M.attached[ev.buf] = nil
+        end
       end
     end,
   })
