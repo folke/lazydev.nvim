@@ -87,7 +87,7 @@ end
 ---@param client vim.lsp.Client
 function M.update(client)
   M.assert(client)
-  client.notify("workspace/didChangeConfiguration", {
+  client:notify("workspace/didChangeConfiguration", {
     settings = { Lua = {} },
   })
 end
