@@ -87,9 +87,16 @@ end
 ---@param client vim.lsp.Client
 function M.update(client)
   M.assert(client)
-  client:notify("workspace/didChangeConfiguration", {
-    settings = { Lua = {} },
-  })
+  local nvim_version = vim.version()
+  if nvim_version.major > 0 or (nvim_version.major == 0 and nvim_version.minor > 10) then
+    client:notify("workspace/didChangeConfiguration", {
+      settings = { Lua = {} },
+    })
+  else
+    client.notify("workspace/didChangeConfiguration", {
+      settings = { Lua = {} },
+    })
+  end
 end
 
 return M
