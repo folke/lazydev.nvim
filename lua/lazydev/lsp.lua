@@ -1,3 +1,4 @@
+local Config = require("lazydev.config")
 local Workspace = require("lazydev.workspace")
 
 local M = {}
@@ -87,9 +88,15 @@ end
 ---@param client vim.lsp.Client
 function M.update(client)
   M.assert(client)
-  client.notify("workspace/didChangeConfiguration", {
-    settings = { Lua = {} },
-  })
+  if Config.have_0_11 then
+    client:notify("workspace/didChangeConfiguration", {
+      settings = { Lua = {} },
+    })
+  else
+    client.notify("workspace/didChangeConfiguration", {
+      settings = { Lua = {} },
+    })
+  end
 end
 
 return M

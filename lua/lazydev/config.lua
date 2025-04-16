@@ -45,6 +45,7 @@ function M.is_enabled(root)
 end
 
 M.have_0_10 = vim.fn.has("nvim-0.10") == 1
+M.have_0_11 = vim.fn.has("nvim-0.11") == 1
 M.lua_root = true
 
 ---@param opts? lazydev.Config
