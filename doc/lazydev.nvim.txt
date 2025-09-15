@@ -129,7 +129,7 @@ Examples:
           -- Only load the lazyvim library when the `LazyVim` global is found
           { path = "LazyVim", words = { "LazyVim" } },
           -- Load the wezterm types when the `wezterm` module is required
-          -- Needs `justinsgithub/wezterm-types` to be installed
+          -- Needs `DrKJeff16/wezterm-types` to be installed
           { path = "wezterm-types", mods = { "wezterm" } },
           -- Load the xmake types when opening file named `xmake.lua`
           -- Needs `LelouchHe/xmake-luals-addon` to be installed
