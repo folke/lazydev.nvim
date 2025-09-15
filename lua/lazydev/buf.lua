@@ -108,7 +108,11 @@ function M.on_line(buf, line)
   -- Check for words
   for word, paths in pairs(Config.words) do
     if line:find(word) then
-      Workspace.find({ buf = buf }):add(paths)
+      local ws = Workspace.find({ buf = buf })
+      if not ws then
+        return
+      end
+      ws:add(paths)
     end
   end
   -- Check for modules
@@ -123,6 +127,9 @@ end
 ---@param modname string
 function M.on_mod(buf, modname)
   local ws = Workspace.find({ buf = buf })
+  if not ws then
+    return
+  end
 
   -- Check for configured modules
   if Config.mods[modname] then

@@ -87,9 +87,15 @@ end
 ---@param client vim.lsp.Client
 function M.update(client)
   M.assert(client)
-  client.notify("workspace/didChangeConfiguration", {
-    settings = { Lua = {} },
-  })
+  if vim.fn.has("nvim-0.11") == 1 then
+    client:notify("workspace/didChangeConfiguration", {
+      settings = { Lua = {} },
+    })
+  else
+    client.notify("workspace/didChangeConfiguration", {
+      settings = { Lua = {} },
+    })
+  end
 end
 
 return M
