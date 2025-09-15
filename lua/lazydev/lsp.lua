@@ -11,7 +11,7 @@ end
 
 ---@param client? vim.lsp.Client
 function M.supports(client)
-  return client and vim.tbl_contains({ "lua_ls", "emmylua-analyzer-rust" }, client.name)
+  return client and vim.tbl_contains({ "lua_ls", "emmylua_ls" }, client.name)
 end
 
 ---@param client vim.lsp.Client
