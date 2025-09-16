@@ -3,6 +3,7 @@ local Workspace = require("lazydev.workspace")
 local M = {}
 M.attached = {} ---@type table<number,number>
 M.did_global_handler = false
+M.supported_clients = { "lua_ls", "emmylua_ls" }
 
 ---@param client? vim.lsp.Client
 function M.assert(client)
@@ -11,7 +12,7 @@ end
 
 ---@param client? vim.lsp.Client
 function M.supports(client)
-  return client and vim.tbl_contains({ "lua_ls", "emmylua_ls" }, client.name)
+  return client and vim.tbl_contains(M.supported_clients, client.name)
 end
 
 ---@param client vim.lsp.Client

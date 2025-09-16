@@ -7,7 +7,7 @@ local M = {}
 M.p2i = {
   ["nvim-cmp"] = "cmp",
   ["coq_nvim"] = "coq",
-  lspconfig = "lspconfig",
+  ["nvim-lspconfig"] = "lspconfig",
 }
 
 -- integration to plugin
