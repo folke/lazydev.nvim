@@ -1,7 +1,7 @@
 local M = {}
 
 function M.setup()
-  if vim.fn.has("nvim-0.11") == 0 then
+  if vim.fn.has("nvim-0.11.2") == 0 then
     return
   end
   for _, server in ipairs(require("lazydev.lsp").supported_clients) do
