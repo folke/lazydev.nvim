@@ -1,4 +1,4 @@
-*lazydev.nvim.txt*          For Neovim          Last change: 2025 September 17
+*lazydev.nvim.txt*           For Neovim           Last change: 2025 October 08
 
 ==============================================================================
 Table of Contents                             *lazydev.nvim-table-of-contents*
@@ -29,7 +29,7 @@ FEATURES                                  *lazydev.nvim-lazydev.nvim-features*
 - load third-party addons from LLS-Addons <https://github.com/LuaLS/LLS-Addons>
 - will update your workspace libraries for:
     - **require** statements: `require("nvim-treesitter")`
-    - **module annotations**`---@module "nvim-treesitter"`
+    - **module annotations**: `---@module "nvim-treesitter"`
 - nvim-cmp <https://github.com/hrsh7th/nvim-cmp>, blink.cmp <https://github.com/Saghen/blink.cmp> and nvim_coq <https://github.com/ms-jpq/coq_nvim> completion source for the above
 
 
@@ -55,7 +55,7 @@ REQUIREMENTS                          *lazydev.nvim-lazydev.nvim-requirements*
 
 INSTALLATION                          *lazydev.nvim-lazydev.nvim-installation*
 
-With lazy.nvim <https://github.com/folke/lazy.nvim>
+With lazy.nvim <https://github.com/folke/lazy.nvim>:
 
 >lua
     return {
@@ -189,7 +189,7 @@ The `:LazyDev` command:
 
 - `:LazyDev` or `:LazyDev debug` will show a notification with the **lazydev**
     settings for the current buffer.
-- `:LazyDev lsp`will show a notification with the settings for
+- `:LazyDev lsp`: will show a notification with the settings for
     **any** attached LSP servers. Not limited to **LuaLS**.
 
 ==============================================================================
