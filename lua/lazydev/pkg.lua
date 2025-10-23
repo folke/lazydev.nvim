@@ -9,12 +9,54 @@ M.PAT_MODULE = M.PAT_MODULE_BASE .. "[\"']"
 M.PAT_REQUIRE = M.PAT_REQUIRE_BASE .. "[\"']"
 
 local is_lazy = type(package.loaded.lazy) == "table"
+M.resolved = {} ---@type table<string, { root:string, target:string }|false>
+
+--- resolves the current cwd to the main worktree root
+function M.resolve_root()
+  local cwd = vim.fs.normalize(assert(vim.uv.cwd()))
+  local root = cwd -- git root
+  local target = cwd -- git worktree main
+  if M.resolved[cwd] ~= nil then
+    return M.resolved[cwd]
+  end
+  local git_root = vim.fs.find(".git", { path = target, upward = true })[1]
+  if git_root then
+    root = vim.fs.dirname(git_root)
+    target = root
+    if vim.fn.isdirectory(git_root) == 0 then
+      -- resolve worktree
+      git_root =
+        vim.fn.systemlist({ "git", "-C", target, "rev-parse", "--path-format=absolute", "--git-common-dir" })[1]
+      if git_root and git_root ~= "" and vim.fn.isdirectory(git_root) == 1 then
+        target = vim.fs.dirname(git_root)
+      end
+    end
+  end
+  target = vim.fs.normalize(target)
+  M.resolved[cwd] = root ~= target and { root = root, target = target } or false
+  return M.resolved[cwd]
+end
+
+---@param path string
+function M.rewrite(path)
+  path = vim.fs.normalize(path)
+  local r = M.resolve_root()
+  if
+    r
+    and path:sub(1, #r.target) == r.target
+    and (#path == #r.target or path:sub(#r.target + 1, #r.target + 1) == "/")
+  then
+    path = r.root .. path:sub(#r.target + 1)
+  end
+  return path
+end
 
 ---@param modname string
 ---@return string[]
 function M.lazy_unloaded(modname)
   local Util = require("lazy.core.util")
-  return Util.get_unloaded_rtp(modname)
+  local ret = Util.get_unloaded_rtp(modname)
+  return vim.tbl_map(M.rewrite, ret)
 end
 
 ---@type string[]
@@ -35,7 +77,7 @@ function M.pack_unloaded()
   for _, site in pairs(sites) do
     for _, pack in ipairs(vim.fn.expand(site .. "/pack/*/opt/*", false, true)) do
       if not pack:find("*", 1, true) then
-        packs[#packs + 1] = Util.norm(pack)
+        packs[#packs + 1] = M.rewrite(Util.norm(pack))
       end
     end
   end
@@ -52,18 +94,20 @@ function M.get_plugin_path(name)
   if is_lazy then
     local Config = require("lazy.core.config")
     local plugin = Config.spec.plugins[name]
-    return plugin and plugin.dir
+    return plugin and M.rewrite(plugin.dir)
   else
-    for _, dir in ipairs(vim.opt.rtp:get()) do
+    for _, dir in
+      ipairs(vim.opt.rtp:get() --[[@as string[] ]])
+    do
       local basename = vim.fs.basename(dir)
       if basename == name then
-        return dir
+        return M.rewrite(dir)
       end
     end
     for _, dir in ipairs(M.pack_unloaded()) do
       local basename = vim.fs.basename(dir)
       if basename == name then
-        return dir
+        return M.rewrite(dir)
       end
     end
   end
