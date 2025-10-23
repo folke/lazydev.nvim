@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.10.0](https://github.com/folke/lazydev.nvim/compare/v1.9.0...v1.10.0) (2025-10-23)
+
+
+### Features
+
+* added preliminary support for emmylua-analyzer-rust. See [#86](https://github.com/folke/lazydev.nvim/issues/86) ([af3789e](https://github.com/folke/lazydev.nvim/commit/af3789e731fcf57d1b9553b074ac73a439749415))
+* **pkg:** added support for working on plugins in worktrees to prevent duplicate diagnostics ([acff870](https://github.com/folke/lazydev.nvim/commit/acff870c0a12859d155f618dc8553372c36ce308))
+
+
+### Bug Fixes
+
+* **emmylua:** correct expected client name ([#96](https://github.com/folke/lazydev.nvim/issues/96)) ([954ecf7](https://github.com/folke/lazydev.nvim/commit/954ecf72dab547f2a14db473cf6253eeb67dfd4a))
+* **integration:** update blink integration ([#80](https://github.com/folke/lazydev.nvim/issues/80)) ([2eecba3](https://github.com/folke/lazydev.nvim/commit/2eecba3831e8e344654e2f6ff5530d6ffc59fb90))
+* **lspconfig:** add check for lsp.is_enabled ([#123](https://github.com/folke/lazydev.nvim/issues/123)) ([258d2a5](https://github.com/folke/lazydev.nvim/commit/258d2a5ef4a3e3d6d9ba9da72c9725c53e9afcbd))
+* **lspconfig:** only enable on 0.11.2 ([092b7b3](https://github.com/folke/lazydev.nvim/commit/092b7b3c900d95840165674c6fa3d1ca0fd0ae42))
+* **lsp:** handle LSP detach ([#92](https://github.com/folke/lazydev.nvim/issues/92)) ([1bb04c9](https://github.com/folke/lazydev.nvim/commit/1bb04c98460040524fd551d111a09a114a720770)), closes [#56](https://github.com/folke/lazydev.nvim/issues/56)
+* **lsp:** lspconfig integration workspaces now only works on Neovim 0.11 ([c8e1d43](https://github.com/folke/lazydev.nvim/commit/c8e1d4349cd162fd9f38324babb9a7e0ff703415))
+* removed deprecated usage of client.notify ([d501792](https://github.com/folke/lazydev.nvim/commit/d5017922c526f35acc914052075947ecd2301c12))
+
 ## [1.9.0](https://github.com/folke/lazydev.nvim/compare/v1.8.0...v1.9.0) (2024-11-24)
 
 
