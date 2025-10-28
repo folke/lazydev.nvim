@@ -1,4 +1,4 @@
-*lazydev.nvim.txt*           For Neovim           Last change: 2025 October 23
+*lazydev.nvim.txt*                                           lazydev.nvim docs
 
 ==============================================================================
 Table of Contents                             *lazydev.nvim-table-of-contents*
