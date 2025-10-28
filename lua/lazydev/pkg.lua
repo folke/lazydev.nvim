@@ -28,7 +28,8 @@ function M.resolve_root()
       git_root =
         vim.fn.systemlist({ "git", "-C", target, "rev-parse", "--path-format=absolute", "--git-common-dir" })[1]
       if git_root and git_root ~= "" and vim.fn.isdirectory(git_root) == 1 then
-        target = vim.fs.dirname(git_root)
+        target =
+          vim.fn.systemlist({ "git", "-C", git_root, "rev-parse", "--path-format=absolute", "--show-toplevel" })[1]
       end
     end
   end
