@@ -33,7 +33,7 @@ function M.norm(path)
   -- Special case for Windows drive letters
   -- vim.fs.normalize doesn't handle them correctly
   if path:sub(2, 2) == ":" then
-    path = path:sub(1, 1):lower() .. path:sub(2)
+    path = path:sub(1, 1):upper() .. path:sub(2)
   end
   return path
 end
