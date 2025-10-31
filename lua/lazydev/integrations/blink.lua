@@ -50,6 +50,19 @@ function M:get_completions(ctx, callback)
         kind = vim.lsp.protocol.CompletionItemKind.Module,
         insertTextFormat = vim.lsp.protocol.InsertTextFormat.PlainText,
         insertText = last,
+        textEdit = {
+          newText = last,
+          range = {
+            start = {
+              line = ctx.cursor[1] - 1,
+              character = ctx.bounds.start_col - 1,
+            },
+            ["end"] = {
+              line = ctx.cursor[1] - 1,
+              character = ctx.cursor[2],
+            },
+          },
+        },
       }
     local item = items[modname]
     -- item.label = "test + " .. item.label
