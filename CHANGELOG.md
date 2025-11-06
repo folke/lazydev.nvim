@@ -1,5 +1,19 @@
 # Changelog
 
+## [1.11.0](https://github.com/folke/lazydev.nvim/compare/v1.10.0...v1.11.0) (2025-11-06)
+
+
+### Features
+
+* **blink:** add `textEdit` to completion items ([#126](https://github.com/folke/lazydev.nvim/issues/126)) ([371cd74](https://github.com/folke/lazydev.nvim/commit/371cd7434cbf95606f1969c2c744da31b77fcfa6))
+
+
+### Bug Fixes
+
+* **lsp:** if the workspace root matches the client root, return client's non-normalized root instead. Closes [#128](https://github.com/folke/lazydev.nvim/issues/128) ([5231c62](https://github.com/folke/lazydev.nvim/commit/5231c62aa83c2f8dc8e7ba957aa77098cda1257d))
+* **pkg:** worktree resolving ([743cf96](https://github.com/folke/lazydev.nvim/commit/743cf96bce690b5a3bdc095c0334d775681e1514))
+* **util:** Util.norm should uppercase drive letter on windows ([faf4623](https://github.com/folke/lazydev.nvim/commit/faf46237f0df43a29e12abd143ff1a0bbac27b7e))
+
 ## [1.10.0](https://github.com/folke/lazydev.nvim/compare/v1.9.0...v1.10.0) (2025-10-23)
 
 
