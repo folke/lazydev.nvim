@@ -14,7 +14,7 @@ function M.find_workspace(buf)
   local fname = vim.api.nvim_buf_get_name(buf or 0)
   local Workspace = require("lazydev.workspace")
   local ws = Workspace.find({ path = fname })
-  return ws and ws.root or nil
+  return ws and ws:root_dir() or nil
 end
 
 return M

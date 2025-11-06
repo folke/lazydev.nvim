@@ -74,6 +74,17 @@ function M.find(opts)
   end
 end
 
+--- Returns the effective root directory of the workspace.
+--- If a client is already attached, then return its non-normalized root_dir,
+--- if it matches the workspace root.
+function M:root_dir()
+  local client = self:client()
+  if client and Util.norm(client.root_dir) == self.root then
+    return client.root_dir
+  end
+  return self.root
+end
+
 ---@param path string
 ---@param opts? {library?:boolean}
 function M:has(path, opts)
