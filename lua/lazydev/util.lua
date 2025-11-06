@@ -35,6 +35,9 @@ function M.norm(path)
   if path:sub(2, 2) == ":" then
     path = path:sub(1, 1):upper() .. path:sub(2)
   end
+
+  path = path:sub(-1) ~= "/" and path .. "/" or path
+
   return path
 end
 
