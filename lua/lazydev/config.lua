@@ -4,9 +4,14 @@ local M = {}
 ---@alias lazydev.Library {path:string, words:string[], mods:string[], files:string[]}
 ---@alias lazydev.Library.spec string|{path:string, words?:string[], mods?:string[], files?:string[]}
 ---@class lazydev.Config
+---@field debug? boolean
+---@field enabled? boolean|(fun(root:string):boolean?)
+---@field integrations? table<string, boolean>
+---@field library? lazydev.Library.spec[]
+---@field runtime? string
 local defaults = {
-  runtime = vim.env.VIMRUNTIME --[[@as string]],
-  library = {}, ---@type lazydev.Library.spec[]
+  runtime = vim.env.VIMRUNTIME,
+  library = {},
   integrations = {
     -- Fixes vim.lsp.config workspace management for LuaLS
     -- Only create a new workspace if the buffer is not part
@@ -20,7 +25,6 @@ local defaults = {
     -- same, but for Coq
     coq = false,
   },
-  ---@type boolean|(fun(root:string):boolean?)
   enabled = function(root_dir)
     return vim.g.lazydev_enabled == nil and true or vim.g.lazydev_enabled
   end,
