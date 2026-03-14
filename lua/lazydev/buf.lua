@@ -42,10 +42,59 @@ function M.setup()
     end,
   })
 
+  vim.api.nvim_create_autocmd("LspProgress", {
+    group = group,
+    pattern = { "begin", "end" },
+    callback = function(ev)
+      local client = vim.lsp.get_client_by_id(ev.data.client_id)
+
+      if not client or not Lsp.supports(client) or not Lsp.attached[client.id] then
+        return
+      end
+
+      local title = (vim.tbl_get(ev.data, "params", "value", "title") or ""):lower()
+      local config_titles = { "loading workspace", "load workspace" }
+      local is_config_title = vim.list_contains(config_titles, title)
+
+      if is_config_title then
+        local lsp = Lsp.attached[client.id]
+
+        if ev.file == "begin" then
+          lsp.updates = lsp.updates + 1
+        end
+
+        if ev.file == "end" then
+          lsp.updates = lsp.updates - 1
+
+          if lsp.updates == 0 then
+            for bufnr in pairs(client.attached_buffers) do
+              if vim.api.nvim_buf_is_valid(bufnr) then
+                -- Enable back diagnostics so the buffer isn't filled
+                -- with lsp warnings while config is changing
+                if lsp.toggled_diagnostics[bufnr] then
+                  lsp.toggled_diagnostics[bufnr] = nil
+                  vim.diagnostic.enable(true, { bufnr = bufnr })
+                end
+
+                -- Fix semantic tokens not updating when buffer
+                -- has switched while config is changing
+                if vim.fn.has("nvim-0.9") == 1 then
+                  vim.lsp.semantic_tokens.force_refresh(bufnr)
+                end
+              end
+            end
+          end
+        end
+      end
+    end,
+  })
+
   -- Attach to all existing clients
   for _, client in ipairs(M.get_clients()) do
-    for buf in pairs(client.attached_buffers) do
-      M.on_attach(client, buf)
+    for bufnr in pairs(client.attached_buffers) do
+      if vim.api.nvim_buf_is_valid(bufnr) then
+        M.on_attach(client, bufnr)
+      end
     end
   end
 
@@ -184,7 +233,7 @@ function M.update()
     )
   end
   for _, client in ipairs(M.get_clients()) do
-    local update = false
+    local should_update = false
 
     ---@param ws lsp.WorkspaceFolder
     local folders = vim.tbl_map(function(ws)
@@ -197,13 +246,12 @@ function M.update()
 
     for _, w in ipairs(folders) do
       if w:update() then
-        update = true
+        should_update = true
       end
     end
 
-    if update then
-      Lsp.attach(client)
-      Lsp.update(client)
+    if should_update then
+      Lsp.attach_or_update(client)
     end
   end
 end

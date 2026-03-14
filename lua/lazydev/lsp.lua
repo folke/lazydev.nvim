@@ -1,7 +1,12 @@
 local Workspace = require("lazydev.workspace")
 
+---@class lazydev.Lsp
+---@field client_id number
+---@field updates number
+---@field toggled_diagnostics table<number,boolean>
+
 local M = {}
-M.attached = {} ---@type table<number,number>
+M.attached = {} ---@type table<number,lazydev.Lsp>
 M.did_global_handler = false
 M.supported_clients = { "lua_ls", "emmylua_ls" }
 
@@ -16,33 +21,58 @@ function M.supports(client)
 end
 
 ---@param client vim.lsp.Client
-function M.attach(client)
-  if M.attached[client.id] then
-    return
-  end
-
+function M.attach_or_update(client)
   M.assert(client)
 
-  M.attached[client.id] = client.id
+  if M.attached[client.id] then
+    local lsp = M.attached[client.id]
 
-  -- lspconfig uses the same empty table for all clients.
-  -- We need to make sure that each client has its own handlers table.
-  client.handlers = vim.tbl_extend("force", {}, client.handlers or {})
-
-  if vim.fn.has("nvim-0.10") == 0 then
-    if M.did_global_handler then
-      return
-    end
-    M.did_global_handler = true
-    local orig = vim.lsp.handlers["workspace/configuration"]
-    vim.lsp.handlers["workspace/configuration"] = function(err, params, ctx, cfg)
-      if M.attached[ctx.client_id] then
-        return M.on_workspace_configuration(err, params, ctx, cfg)
+    -- Temprorarily disable diagnostics on attached buffers
+    if vim.fn.has("nvim-0.10") == 1 then
+      for bufnr in pairs(client.attached_buffers) do
+        if vim.api.nvim_buf_is_valid(bufnr) and vim.diagnostic.is_enabled({ bufnr = bufnr }) then
+          lsp.toggled_diagnostics[bufnr] = true
+          vim.diagnostic.enable(false, { bufnr = bufnr })
+        end
       end
-      return orig(err, params, ctx, cfg)
+    end
+
+    if vim.fn.has("nvim-0.11") == 1 then
+      client:notify("workspace/didChangeConfiguration", {
+        settings = { Lua = {} },
+      })
+    else
+      ---@diagnostic disable-next-line: param-type-mismatch
+      client.notify("workspace/didChangeConfiguration", {
+        settings = { Lua = {} },
+      })
     end
   else
-    client.handlers["workspace/configuration"] = M.on_workspace_configuration
+    M.attached[client.id] = {
+      client_id = client.id,
+      updates = 0,
+      toggled_diagnostics = {},
+    }
+
+    -- lspconfig uses the same empty table for all clients.
+    -- We need to make sure that each client has its own handlers table.
+    client.handlers = vim.tbl_extend("force", {}, client.handlers or {})
+
+    if vim.fn.has("nvim-0.10") == 0 then
+      if M.did_global_handler then
+        return
+      end
+      M.did_global_handler = true
+      local orig = vim.lsp.handlers["workspace/configuration"]
+      vim.lsp.handlers["workspace/configuration"] = function(err, params, ctx, cfg)
+        if M.attached[ctx.client_id] then
+          return M.on_workspace_configuration(err, params, ctx, cfg)
+        end
+        return orig(err, params, ctx, cfg)
+      end
+    else
+      client.handlers["workspace/configuration"] = M.on_workspace_configuration
+    end
   end
 end
 
@@ -83,20 +113,6 @@ function M.on_workspace_configuration(err, params, ctx, cfg)
     end
   end
   return response
-end
-
----@param client vim.lsp.Client
-function M.update(client)
-  M.assert(client)
-  if vim.fn.has("nvim-0.11") == 1 then
-    client:notify("workspace/didChangeConfiguration", {
-      settings = { Lua = {} },
-    })
-  else
-    client.notify("workspace/didChangeConfiguration", {
-      settings = { Lua = {} },
-    })
-  end
 end
 
 return M
