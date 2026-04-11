@@ -85,6 +85,7 @@ function M.on_attach(client, buf)
       M.on_lines(buf, 0, vim.api.nvim_buf_line_count(buf))
     end,
   })
+  Pkg.update_require_aliases(M.get_clients(), buf)
   -- Trigger initial scan
   M.on_lines(buf, 0, vim.api.nvim_buf_line_count(buf))
   M.on_file(buf)
