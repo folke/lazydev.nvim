@@ -2,11 +2,46 @@
 local M = {}
 
 M.PAT_MODULE_BASE = "%-%-%-%s*@module%s*[\"']([%w%.%-_/]*)"
-M.PAT_REQUIRE_BASE = "require%s*,?%s*%(?%s*['\"]([%w%.%-_/]*)"
+M.PAT_ARGS_BASE = "%s*,?%s*%(?%s*['\"]([%w%.%-_/]*)"
 M.PAT_MODULE_BEFORE = M.PAT_MODULE_BASE .. "$"
-M.PAT_REQUIRE_BEFORE = M.PAT_REQUIRE_BASE .. "$"
 M.PAT_MODULE = M.PAT_MODULE_BASE .. "[\"']"
-M.PAT_REQUIRE = M.PAT_REQUIRE_BASE .. "[\"']"
+
+---@param name string require or an alias
+---@param before? boolean
+---@return string
+local function require_pat(name, before)
+  return name .. M.PAT_ARGS_BASE .. (before and "$" or "[\"']")
+end
+
+M.PAT_REQUIRE_BEFORE = require_pat("require", true)
+M.PAT_REQUIRE = require_pat("require", false)
+
+M.require_aliases = {} ---@type string[]
+
+--- Update the list of require aliases from runtime.special in client settings.
+---@param clients vim.lsp.Client[]
+---@param buf number
+function M.update_require_aliases(clients, buf)
+  local uri = vim.uri_from_fname(vim.api.nvim_buf_get_name(buf))
+  local results = {}
+
+  for _, client in ipairs(clients) do
+    local data = client:request_sync("workspace/executeCommand", {
+      command = "lua.getConfig",
+      arguments = { { uri = uri, key = "Lua.runtime.special" } },
+    })
+
+    if data and data.result and not data.err then
+      for alias, target in pairs(data.result) do
+        if target == "require" then
+          table.insert(results, alias)
+        end
+      end
+    end
+  end
+
+  M.require_aliases = vim.list.unique(results)
+end
 
 local is_lazy = type(package.loaded.lazy) == "table"
 M.resolved = {} ---@type table<string, { root:string, target:string }|false>
@@ -169,13 +204,17 @@ end
 ---@param opts? {before?:boolean}
 ---@return string?, boolean? forward_slash
 function M.get_module(line, opts)
-  local patterns = opts and opts.before and {
+  local before = opts and opts.before
+  local patterns = before and {
     M.PAT_MODULE_BEFORE,
     M.PAT_REQUIRE_BEFORE,
   } or {
     M.PAT_MODULE,
     M.PAT_REQUIRE,
   }
+  for _, alias in ipairs(M.require_aliases) do
+    patterns[#patterns + 1] = require_pat(alias, before)
+  end
   for _, pat in ipairs(patterns) do
     local match = line:match(pat)
     if match then
