@@ -63,7 +63,7 @@ function M.on_workspace_configuration(err, params, ctx, cfg)
   for _, item in ipairs(params.items) do
     if item.section then
       local settings = client.settings
-      if item.section == "Lua" then
+      if item.section == "emmylua" then
         local ws = item.scopeUri and Workspace.get(client, vim.uri_to_fname(item.scopeUri)) or Workspace.single(client)
         if ws:enabled() then
           settings = ws.settings
@@ -90,11 +90,11 @@ function M.update(client)
   M.assert(client)
   if vim.fn.has("nvim-0.11") == 1 then
     client:notify("workspace/didChangeConfiguration", {
-      settings = { Lua = {} },
+      settings = { emmylua = {} },
     })
   else
     client.notify("workspace/didChangeConfiguration", {
-      settings = { Lua = {} },
+      settings = { emmylua = {} },
     })
   end
 end
