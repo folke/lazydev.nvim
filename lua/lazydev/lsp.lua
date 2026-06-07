@@ -60,10 +60,16 @@ function M.on_workspace_configuration(err, params, ctx, cfg)
   end
 
   local response = {}
+  local st_name
+  if client.name == "lua_ls" then
+    st_name = "Lua"
+  elseif client.name == "emmylua_ls" then
+    st_name = "emmylua"
+  end
   for _, item in ipairs(params.items) do
     if item.section then
       local settings = client.settings
-      if item.section == "Lua" or item.section == "emmylua" then
+      if item.section == st_name then
         local ws = item.scopeUri and Workspace.get(client, vim.uri_to_fname(item.scopeUri)) or Workspace.single(client)
         if ws:enabled() then
           settings = ws.settings
