@@ -87,27 +87,21 @@ end
 
 ---@param client vim.lsp.Client
 function M.update(client)
+  local targ_settings
+  if client.name == "lua_ls" then
+    targ_settings = { Lua = {} }
+  elseif client.name == "emmylua_ls" then
+    targ_settings = { emmylua = {} }
+  end
   M.assert(client)
   if vim.fn.has("nvim-0.11") == 1 then
-    if vim.lsp.client.name == "lua_ls" then
-      client:notify("workspace/didChangeConfiguration", {
-        settings = { Lua = {} },
-      })
-    elseif vim.lsp.client.name == "emmylua_ls" then
-      client:notify("workspace/didChangeConfiguration", {
-        settings = { emmylua = {} },
-      })
-    end
+    client:notify("workspace/didChangeConfiguration", {
+      settings = targ_settings,
+    })
   else
-    if vim.lsp.client.name == "lua_ls" then
-      client:notify("workspace/didChangeConfiguration", {
-        settings = { Lua = {} },
-      })
-    elseif vim.lsp.client.name == "emmylua_ls" then
-      client:notify("workspace/didChangeConfiguration", {
-        settings = { emmylua = {} },
-      })
-    end
+    client:notify("workspace/didChangeConfiguration", {
+      settings = targ_settings,
+    })
   end
 end
 

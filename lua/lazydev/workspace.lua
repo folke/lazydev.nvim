@@ -177,15 +177,21 @@ function M:update()
   vim.list_extend(libs, M.global().library)
   vim.list_extend(libs, self.library)
 
+  local st_name
+  if client.name == "lua_ls" then
+    st_name = "Lua"
+  elseif client.name == "emmylua_ls" then
+    st_name = "emmylua"
+  end
   ---@type string[]
-  local library = vim.tbl_get(settings, "Lua", "workspace", "library") or {}
+  local library = vim.tbl_get(settings, st_name, "workspace", "library") or {}
   for _, path in ipairs(libs) do
     if not vim.tbl_contains(library, path) then
       table.insert(library, path)
     end
   end
 
-  if vim.lsp.client.name == "lua_ls" then
+  if client.name == "lua_ls" then
     settings = vim.tbl_deep_extend("force", settings, {
       Lua = {
         runtime = {
@@ -200,7 +206,7 @@ function M:update()
         },
       },
     })
-  elseif vim.lsp.client.name == "emmylua_ls" then
+  elseif client.name == "emmylua_ls" then
     settings = vim.tbl_deep_extend("force", settings, {
       emmylua = {
         runtime = {
@@ -226,7 +232,6 @@ function M:update()
     return true
   end
 end
-
 ---@param opts? {details: boolean}
 function M:debug(opts)
   local rc = not M.is_special(self.root) and vim.fs.find(".luarc.json", { upward = true, path = self.root })[1]
@@ -237,21 +242,21 @@ function M:debug(opts)
   local root = M.is_special(self.root) and "[" .. self.root .. "]" or vim.fn.fnamemodify(self.root, ":~")
 
   local lines = { "## " .. root }
-  if vim.lsp.client.name == "lua_ls" then
-    ---@type string[]
-    local library = vim.tbl_get(self.settings, "Lua", "workspace", "library") or {}
-    for _, lib in ipairs(library) do
-      lib = vim.fn.fnamemodify(lib, ":~")
-      local plugin = Pkg.get_plugin_name(lib .. "/")
-      table.insert(lines, "- " .. (plugin and "**" .. plugin .. "** " or "") .. ("`" .. lib .. "`"))
-    end
-  elseif vim.lsp.client.name == "emmylua_ls" then
-    local library = vim.tbl_get(self.settings, "emmylua", "workspace", "library") or {}
-    for _, lib in ipairs(library) do
-      lib = vim.fn.fnamemodify(lib, ":~")
-      local plugin = Pkg.get_plugin_name(lib .. "/")
-      table.insert(lines, "- " .. (plugin and "**" .. plugin .. "** " or "") .. ("`" .. lib .. "`"))
-    end
+
+  local client = vim.lsp.client
+  local st_name
+  if client.name == "lua_ls" then
+    st_name = "Lua"
+  elseif client.name == "emmylua_ls" then
+    st_name = "emmylua"
+  end
+
+  ---@type string[]
+  local library = vim.tbl_get(self.settings, st_name, "workspace", "library") or {}
+  for _, lib in ipairs(library) do
+    lib = vim.fn.fnamemodify(lib, ":~")
+    local plugin = Pkg.get_plugin_name(lib .. "/")
+    table.insert(lines, "- " .. (plugin and "**" .. plugin .. "** " or "") .. ("`" .. lib .. "`"))
   end
   if opts.details then
     lines[#lines + 1] = "```lua"
