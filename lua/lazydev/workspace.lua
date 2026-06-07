@@ -185,20 +185,38 @@ function M:update()
     end
   end
 
-  settings = vim.tbl_deep_extend("force", settings, {
-    Lua = {
-      runtime = {
-        version = "LuaJIT",
-        path = Config.lua_root and { "?.lua", "?/init.lua" } or { "lua/?.lua", "lua/?/init.lua" },
-        pathStrict = true,
+  if vim.lsp.client.name == "lua_ls" then
+    settings = vim.tbl_deep_extend("force", settings, {
+      Lua = {
+        runtime = {
+          version = "LuaJIT",
+          path = Config.lua_root and { "?.lua", "?/init.lua" } or { "lua/?.lua", "lua/?/init.lua" },
+          pathStrict = true,
+        },
+        workspace = {
+          checkThirdParty = false,
+          library = library,
+          ignoreDir = Config.lua_root and { "/lua" } or nil,
+        },
       },
-      workspace = {
-        checkThirdParty = false,
-        library = library,
-        ignoreDir = Config.lua_root and { "/lua" } or nil,
+    })
+  elseif vim.lsp.client.name == "emmylua_ls" then
+    settings = vim.tbl_deep_extend("force", settings, {
+      emmylua = {
+        runtime = {
+          version = "LuaJIT",
+          requirePattern = Config.lua_root and { "?.lua", "?/init.lua" } or { "lua/?.lua", "lua/?/init.lua" },
+        },
+        strict = {
+          requirePath = true,
+        },
+        workspace = {
+          library = library,
+          ignoreDir = Config.lua_root and { "/lua" } or nil,
+        },
       },
-    },
-  })
+    })
+  end
 
   if not vim.deep_equal(settings, self.settings) then
     self.settings = settings
@@ -217,13 +235,23 @@ function M:debug(opts)
   end
   opts = opts or {}
   local root = M.is_special(self.root) and "[" .. self.root .. "]" or vim.fn.fnamemodify(self.root, ":~")
+
   local lines = { "## " .. root }
-  ---@type string[]
-  local library = vim.tbl_get(self.settings, "Lua", "workspace", "library") or {}
-  for _, lib in ipairs(library) do
-    lib = vim.fn.fnamemodify(lib, ":~")
-    local plugin = Pkg.get_plugin_name(lib .. "/")
-    table.insert(lines, "- " .. (plugin and "**" .. plugin .. "** " or "") .. ("`" .. lib .. "`"))
+  if vim.lsp.client.name == "lua_ls" then
+    ---@type string[]
+    local library = vim.tbl_get(self.settings, "Lua", "workspace", "library") or {}
+    for _, lib in ipairs(library) do
+      lib = vim.fn.fnamemodify(lib, ":~")
+      local plugin = Pkg.get_plugin_name(lib .. "/")
+      table.insert(lines, "- " .. (plugin and "**" .. plugin .. "** " or "") .. ("`" .. lib .. "`"))
+    end
+  elseif vim.lsp.client.name == "emmylua_ls" then
+    local library = vim.tbl_get(self.settings, "emmylua", "workspace", "library") or {}
+    for _, lib in ipairs(library) do
+      lib = vim.fn.fnamemodify(lib, ":~")
+      local plugin = Pkg.get_plugin_name(lib .. "/")
+      table.insert(lines, "- " .. (plugin and "**" .. plugin .. "** " or "") .. ("`" .. lib .. "`"))
+    end
   end
   if opts.details then
     lines[#lines + 1] = "```lua"
