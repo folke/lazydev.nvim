@@ -3,30 +3,44 @@ local Pkg = require("lazydev.pkg")
 local Util = require("lazydev.util")
 
 ---@class lazydev.Workspace
----@field root string
+---@field root      string
 ---@field client_id number
----@field settings table
----@field library string[]
+---@field settings  table
+---@field library   string[]
 local M = {}
 M.__index = M
 M.SINGLE = "single"
 M.GLOBAL = "global"
 
----@type table<string,lazydev.Workspace>
+---@type table<string, lazydev.Workspace>
 M.workspaces = {}
+
+---@return string?
+function M.which_client()
+  local clients = Util.get_clients({ bufnr = 0 })
+  for _, client in ipairs(clients) do
+    if client.name == "lua_ls" then
+      return "Lua"
+    elseif client.name == "emmylua_ls" then
+      return "emmylua"
+    else
+      return nil
+    end
+  end
+end
 
 function M.is_special(root)
   return root == M.SINGLE or root == M.GLOBAL
 end
 
 ---@param client_id number
----@param root string
+---@param root      string
 function M.new(client_id, root)
   local self = setmetatable({
     root = root,
     client_id = client_id,
     settings = {},
-    library = {},
+    library = {}
   }, M)
   if not M.is_special(root) then
     self:add(root)
@@ -34,8 +48,8 @@ function M.new(client_id, root)
   return self
 end
 
----@param client vim.lsp.Client|number
----@param root string
+---@param client vim.lsp.Client | number
+---@param root   string
 function M.get(client, root)
   root = M.is_special(root) and root or Util.norm(root)
   local client_id = type(client) == "number" and client or client.id
@@ -55,12 +69,12 @@ function M.single(client)
   return M.get(client, M.SINGLE)
 end
 
----@param opts {buf?:number, path?:string}
+---@param opts { buf?: number, path?: string }
 function M.find(opts)
   if opts.buf then
     local Lsp = require("lazydev.lsp")
     local clients = Util.get_clients({ bufnr = opts.buf })
-    clients = vim.tbl_filter(function(client)
+    clients = vim.tbl_filter(function (client)
       return client and Lsp.supports(client)
     end, clients)
     local client = clients[1]
@@ -85,8 +99,8 @@ function M:root_dir()
   return self.root
 end
 
----@param path string
----@param opts? {library?:boolean}
+---@param path  string
+---@param opts? { library?: boolean }
 function M:has(path, opts)
   opts = opts or {}
   path = Util.norm(path)
@@ -103,7 +117,7 @@ function M:has(path, opts)
 end
 
 ---@param client vim.lsp.Client
----@param buf number
+---@param buf    number
 function M.get_root(client, buf)
   local uri = vim.uri_from_bufnr(buf)
   for _, ws in ipairs(client.workspace_folders or {}) do
@@ -114,7 +128,7 @@ function M.get_root(client, buf)
   return client.root_dir or "single"
 end
 
----@param path string|string[]
+---@param path string | string[]
 function M:add(path)
   if type(path) == "table" then
     for _, p in ipairs(path) do
@@ -148,7 +162,7 @@ function M:add(path)
   if path ~= self.root and not vim.tbl_contains(self.library, path) then
     table.insert(self.library, path)
     if self.root ~= M.GLOBAL then
-      vim.schedule(function()
+      vim.schedule(function ()
         require("lazydev.buf").update()
       end)
     end
@@ -177,29 +191,47 @@ function M:update()
   vim.list_extend(libs, M.global().library)
   vim.list_extend(libs, self.library)
 
+  local client_type = self.which_client()
   ---@type string[]
-  local library = vim.tbl_get(settings, "Lua", "workspace", "library") or {}
+  local library = vim.tbl_get(settings, client_type, "workspace", "library") or {}
   for _, path in ipairs(libs) do
     if not vim.tbl_contains(library, path) then
       table.insert(library, path)
     end
   end
 
-  settings = vim.tbl_deep_extend("force", settings, {
-    Lua = {
-      runtime = {
-        version = "LuaJIT",
-        path = Config.lua_root and { "?.lua", "?/init.lua" } or { "lua/?.lua", "lua/?/init.lua" },
-        pathStrict = true,
-      },
-      workspace = {
-        checkThirdParty = false,
-        library = library,
-        ignoreDir = Config.lua_root and { "/lua" } or nil,
-      },
-    },
-  })
-
+  if client_type == "Lua" then
+    settings = vim.tbl_deep_extend("force", settings, {
+      Lua = {
+        runtime = {
+          version = "LuaJIT",
+          path = Config.lua_root and { "?.lua", "?/init.lua" } or { "lua/?.lua", "lua/?/init.lua" },
+          pathStrict = true
+        },
+        workspace = {
+          checkThirdParty = false,
+          library = library,
+          ignoreDir = Config.lua_root and { "/lua" } or nil
+        }
+      }
+    })
+  elseif client_type == "emmylua" then
+    settings = vim.tbl_deep_extend("force", settings, {
+      emmylua = {
+        runtime = {
+          version = "LuaJIT",
+          requiredPattern = Config.lua_root and { "?.lua", "?/init.lua" } or { "lua/?.lua", "lua/?/init.lua" }
+        },
+        strict = {
+          requirePath = true
+        },
+        workspace = {
+          library = library,
+          ignoreDir = Config.lua_root and { "/lua" } or nil
+        }
+      }
+    })
+  end
   if not vim.deep_equal(settings, self.settings) then
     self.settings = settings
     if Config.debug then
@@ -209,7 +241,7 @@ function M:update()
   end
 end
 
----@param opts? {details: boolean}
+---@param opts? { details: boolean }
 function M:debug(opts)
   local rc = not M.is_special(self.root) and vim.fs.find(".luarc.json", { upward = true, path = self.root })[1]
   if rc then
@@ -219,7 +251,7 @@ function M:debug(opts)
   local root = M.is_special(self.root) and "[" .. self.root .. "]" or vim.fn.fnamemodify(self.root, ":~")
   local lines = { "## " .. root }
   ---@type string[]
-  local library = vim.tbl_get(self.settings, "Lua", "workspace", "library") or {}
+  local library = vim.tbl_get(self.settings, self.which_client(), "workspace", "library") or {}
   for _, lib in ipairs(library) do
     lib = vim.fn.fnamemodify(lib, ":~")
     local plugin = Pkg.get_plugin_name(lib .. "/")
