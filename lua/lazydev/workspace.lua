@@ -105,7 +105,8 @@ end
 ---@param client vim.lsp.Client
 ---@param buf number
 function M.get_root(client, buf)
-  local uri = vim.uri_from_bufnr(buf)
+  ---@diagnostic disable-next-line:deprecated
+  local uri = ((vim.uri and vim.uri.from_buf) and vim.uri.from_buf or vim.uri_from_bufnr)(buf)
   for _, ws in ipairs(client.workspace_folders or {}) do
     if (uri .. "/"):sub(1, #ws.uri + 1) == ws.uri .. "/" then
       return ws.name
