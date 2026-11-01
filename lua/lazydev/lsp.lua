@@ -1,5 +1,8 @@
 local Workspace = require("lazydev.workspace")
 
+---@diagnostic disable-next-line:deprecated
+local uri_to_fname = (vim.uri and vim.uri.to_fname) and vim.uri.to_fname or vim.uri_to_fname
+
 local M = {}
 M.attached = {} ---@type table<number,number>
 M.did_global_handler = false
@@ -64,7 +67,7 @@ function M.on_workspace_configuration(err, params, ctx, cfg)
     if item.section then
       local settings = client.settings
       if item.section == "Lua" then
-        local ws = item.scopeUri and Workspace.get(client, vim.uri_to_fname(item.scopeUri)) or Workspace.single(client)
+        local ws = item.scopeUri and Workspace.get(client, uri_to_fname(item.scopeUri)) or Workspace.single(client)
         if ws:enabled() then
           settings = ws.settings
         end
